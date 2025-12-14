@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <title>REIKURON PIXEL AR SYSTEM</title>
+    <title>REIKURON CINEMATIC AR SYSTEM</title>
     <style>
-        :root { --primary: #00ffcc; --bg: #050505; }
+        :root { --primary: #00e5ff; --bg: #020202; --glass: rgba(255, 255, 255, 0.1); }
         body { 
             margin: 0; overflow: hidden; background-color: var(--bg); 
-            font-family: 'Courier New', Courier, monospace; /* Retro font */
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             touch-action: none;
         }
 
@@ -17,88 +17,143 @@
             pointer-events: none; z-index: 10;
         }
 
-        /* BRANDING */
+        /* TOP BAR */
         #top-bar {
-            width: 100%; height: 60px;
+            width: 100%; height: 70px;
             background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
             display: flex; align-items: center; justify-content: center;
-            border-bottom: 1px solid rgba(0, 255, 204, 0.2);
         }
         #brand {
-            font-size: 1.8rem; font-weight: 800; letter-spacing: 5px;
-            color: var(--primary); text-shadow: 4px 4px 0px rgba(0, 100, 100, 0.5);
+            font-size: 1.5rem; font-weight: 800; letter-spacing: 4px;
+            color: white; text-shadow: 0 0 20px var(--primary);
             text-transform: uppercase;
         }
 
-        /* SHAPE NAME */
+        /* SHAPE INFO */
         #shape-display {
-            position: absolute; top: 70px; right: 20px;
-            font-size: 1.5rem; font-weight: 800; color: white;
-            text-align: right; text-shadow: 2px 2px 0px #000;
+            position: absolute; top: 80px; right: 20px;
+            text-align: right;
+        }
+        #shape-title {
+            font-size: 2rem; font-weight: 800; color: rgba(255,255,255,0.9);
+            text-shadow: 0 0 10px black; letter-spacing: 2px;
+            margin: 0; line-height: 1;
+        }
+        #shape-sub {
+            font-size: 0.9rem; color: var(--primary); font-weight: 500;
+            letter-spacing: 1px; text-transform: uppercase;
         }
 
-        /* PIXEL GUIDE */
-        #guide-panel {
+        /* CONTAINER FOR CONTROLS (Bottom Left) */
+        #controls-container {
             position: absolute; bottom: 20px; left: 20px;
-            background: rgba(0, 20, 20, 0.6); padding: 15px;
-            border: 2px solid var(--primary);
-            color: #eee; width: 160px;
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.5); /* Hard shadow for retro look */
+            display: flex; flex-direction: column; align-items: flex-start;
+            gap: 10px;
             transform: scale(0.9); transform-origin: bottom left;
+            pointer-events: auto; /* Allow clicking button */
         }
-        .guide-item { display: flex; align-items: center; margin-bottom: 6px; font-size: 0.8rem; font-weight: bold; }
-        .emoji { width: 25px; text-align: center; margin-right: 5px; }
+
+        /* AUTO VIEW BUTTON */
+        #auto-view-btn {
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 10px 20px;
+            font-size: 0.9rem; font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+            transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+            width: 100%;
+            backdrop-filter: blur(5px);
+        }
+        #auto-view-btn:hover {
+            background: var(--primary); color: black; box-shadow: 0 0 25px var(--primary);
+        }
+        #auto-view-btn.active {
+            background: var(--primary); color: black; animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 10px var(--primary); }
+            50% { box-shadow: 0 0 25px var(--primary); }
+            100% { box-shadow: 0 0 10px var(--primary); }
+        }
+
+        /* GLASS GUIDE */
+        #guide-panel {
+            background: var(--glass); padding: 12px;
+            border-radius: 12px; border-left: 3px solid var(--primary);
+            backdrop-filter: blur(10px); color: #ddd; width: 160px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            pointer-events: none;
+        }
+        .guide-item { display: flex; align-items: center; margin-bottom: 6px; font-size: 0.8rem; font-weight: 600; }
+        .emoji { width: 25px; font-size: 1.1rem; text-align: center; margin-right: 8px; }
 
         /* FEEDBACK */
         #feedback {
             position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%);
-            font-size: 1.5rem; color: var(--primary); 
-            background: black; padding: 10px 20px; border: 2px solid var(--primary);
-            opacity: 0; transition: opacity 0.2s; pointer-events: none;
-            font-weight: bold; box-shadow: 5px 5px 0px rgba(0,255,204,0.3);
+            font-size: 1.2rem; color: var(--primary); 
+            background: rgba(0,0,0,0.8); padding: 8px 24px; border-radius: 30px;
+            border: 1px solid var(--primary); box-shadow: 0 0 20px var(--primary);
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+            font-weight: bold; letter-spacing: 1px; white-space: nowrap;
         }
 
         /* START SCREEN */
         #start-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
             z-index: 100; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; transition: opacity 0.5s;
+            align-items: center; justify-content: center; transition: opacity 0.6s;
         }
         #start-btn {
-            background: black; border: 2px solid var(--primary);
-            color: var(--primary); padding: 15px 40px; font-size: 1.2rem;
-            font-weight: bold; cursor: pointer; margin-top: 30px;
-            box-shadow: 5px 5px 0px var(--primary);
-            font-family: 'Courier New', Courier, monospace;
+            background: transparent; border: 2px solid var(--primary);
+            color: var(--primary); padding: 15px 50px; font-size: 1.1rem;
+            font-weight: bold; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.4); margin-top: 30px;
+            transition: transform 0.1s;
         }
-        #start-btn:active { transform: translate(2px, 2px); box-shadow: 3px 3px 0px var(--primary); }
+        #start-btn:active { transform: scale(0.95); }
         
-        #fps-counter { position: absolute; top: 10px; left: 10px; color: #0f0; font-size: 12px; }
+        #fps-counter { position: absolute; top: 10px; left: 10px; color: #0f0; font-size: 10px; font-family: monospace; opacity: 0.6; }
         #video-input { display: none; }
     </style>
 </head>
 <body>
 
     <div id="start-screen">
-        <h1 style="color:white; margin:0; font-size: 2.5rem;">PIXEL <span style="color:var(--primary)">AR</span></h1>
-        <p style="color:#aaa;">Voxel Particle System</p>
-        <button id="start-btn">START SYSTEM</button>
-        <div id="loading-text" style="margin-top:20px; color:#555; display:none;">Initializing Voxels...</div>
+        <h1 style="color:white; margin:0; font-size: 3rem; letter-spacing:5px; text-shadow: 0 0 30px var(--primary);">STARDUST <span style="color:var(--primary)">AR</span></h1>
+        <p style="color:#888; margin-top:10px;">Holographic Particle Engine</p>
+        <button id="start-btn">LAUNCH SYSTEM</button>
+        <div id="loading-text" style="margin-top:20px; color:#555; display:none;">Calibrating AI Sensors...</div>
     </div>
 
     <div id="ui-layer">
         <div id="fps-counter">FPS: 60</div>
         <div id="top-bar"><div id="brand">REIKURON</div></div>
-        <div id="shape-display">SPHERE</div>
+        
+        <div id="shape-display">
+            <h1 id="shape-title">SUN</h1>
+            <div id="shape-sub">Star Type G</div>
+        </div>
 
-        <div id="guide-panel">
-            <div class="guide-item"><span class="emoji">☝️</span> Zoom In</div>
-            <div class="guide-item"><span class="emoji">✌️</span> Zoom Out</div>
-            <div class="guide-item"><span class="emoji">🤟</span> Rotate L</div>
-            <div class="guide-item"><span class="emoji">🖖</span> Rotate R</div>
-            <div class="guide-item"><span class="emoji">🖐️</span> Control</div>
-            <div class="guide-item"><span class="emoji">👌</span> Next Shape</div>
+        <div id="controls-container">
+            <!-- AUTO VIEW BUTTON -->
+            <button id="auto-view-btn" onclick="toggleAutoView()">▶ AUTO VIEW</button>
+            
+            <div id="guide-panel">
+                <div class="guide-item"><span class="emoji">☝️</span> Zoom In</div>
+                <div class="guide-item"><span class="emoji">✌️</span> Zoom Out</div>
+                <div class="guide-item"><span class="emoji">🤟</span> Rotate L</div>
+                <div class="guide-item"><span class="emoji">🖖</span> Rotate R</div>
+                <div class="guide-item"><span class="emoji">🖐️</span> Control</div>
+                <div class="guide-item"><span class="emoji">👌</span> Next Shape</div>
+            </div>
         </div>
 
         <div id="feedback"></div>
@@ -106,6 +161,7 @@
 
     <video id="video-input" playsinline webkit-playsinline muted autoplay></video>
 
+    <!-- LIBS -->
     <script type="importmap">{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }</script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
@@ -114,28 +170,35 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // --- 1. ADAPTIVE PERFORMANCE ---
+        // --- 1. CONFIGURATION ---
         function getHardwareConfig() {
             const cores = navigator.hardwareConcurrency || 4;
             const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-            
-            // PC/High-End: More particles, smaller size
-            if (!isMobile && cores >= 8) return { count: 35000, size: 0.15, ratio: 1.5 };
-            // Mid-Range
-            if (cores >= 6) return { count: 20000, size: 0.2, ratio: 1.2 };
-            // Mobile/Low-End: Fewer particles, bigger size (to fill gaps)
-            return { count: 12000, size: 0.3, ratio: 1.0 };
+            if (!isMobile && cores >= 8) return { count: 35000, ratio: 1.5, size: 0.25 };
+            if (cores >= 6) return { count: 22000, ratio: 1.2, size: 0.3 };
+            return { count: 12000, ratio: 1.0, size: 0.4 }; 
         }
 
         const HW = getHardwareConfig();
+        const SETTINGS = { camZ: 40, zoomSpeed: 0.5, rotSpeed: 0.04 };
 
-        const SETTINGS = {
-            camZ: 35,
-            zoomSpeed: 0.5,
-            rotSpeed: 0.05
-        };
-
-        const SHAPES = ['Sphere', 'Reikuron Crow', 'Itachi Sharingan', 'Helix', 'Galaxy'];
+        // --- 2. SHAPE LIBRARY (With Scale for Auto-View) ---
+        // scale property used to calculate perfect camera distance
+        const SHAPES = [
+            { name: "THE SUN", type: "Star", scale: 14 },
+            { name: "MERCURY", type: "Planet", scale: 8 },
+            { name: "VENUS", type: "Planet", scale: 9 },
+            { name: "EARTH", type: "Planet", scale: 10 },
+            { name: "MARS", type: "Planet", scale: 8.5 },
+            { name: "JUPITER", type: "Gas Giant", scale: 13 },
+            { name: "SATURN", type: "Gas Giant", scale: 12 },
+            { name: "URANUS", type: "Ice Giant", scale: 10 },
+            { name: "NEPTUNE", type: "Ice Giant", scale: 10 },
+            { name: "CROW", type: "Reikuron Special", scale: 12 },
+            { name: "ITACHI", type: "Sharingan", scale: 12 },
+            { name: "HELIX", type: "Structure", scale: 14 },
+            { name: "GALAXY", type: "Spiral", scale: 18 }
+        ];
 
         // --- GLOBALS ---
         let scene, camera, renderer, particles;
@@ -143,25 +206,44 @@
         let handPos = new THREE.Vector3(0,0,0);
         let isHandDetected = false, isPinching = false, wasPinching = false;
         let fingerCount = 0;
-        let currentShape = 0;
+        let currentShapeIndex = 0;
         let time = 0;
 
-        // --- 2. THREE.JS SETUP ---
+        // Auto View Globals
+        let isAutoView = false;
+        let autoInterval = null;
+        let targetCameraZ = 40; // For smooth auto-zooming
+
+        // --- 3. TEXTURE ---
+        function createGlowTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64; canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            const grad = ctx.createRadialGradient(32,32,0, 32,32,32);
+            grad.addColorStop(0, 'rgba(255,255,255,1)');
+            grad.addColorStop(0.2, 'rgba(255,255,255,0.8)');
+            grad.addColorStop(0.5, 'rgba(255,255,255,0.2)');
+            grad.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0,0,64,64);
+            return new THREE.Texture(canvas);
+        }
+
+        // --- 4. ENGINE ---
         function initThree() {
             scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x050505, 0.02); // Dark fog
+            scene.fog = new THREE.FogExp2(0x000000, 0.015);
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.z = SETTINGS.camZ;
 
-            // PIXEL ART STYLE SETTINGS
-            renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
+            renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false, powerPreference: "high-performance" });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, HW.ratio));
             document.body.appendChild(renderer.domElement);
 
             createParticles();
-
+            
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
@@ -187,115 +269,147 @@
             geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-            // THE PIXEL MATERIAL (No Texture = Squares)
+            const tex = createGlowTexture();
+            tex.needsUpdate = true;
+
             const mat = new THREE.PointsMaterial({
-                size: HW.size,
-                vertexColors: true,
-                sizeAttenuation: true // Makes them smaller when far away (3D effect)
-                // No 'map', no 'blending', no 'transparent' -> Solid Squares
+                size: HW.size, map: tex, vertexColors: true,
+                blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.9
             });
 
             particles = new THREE.Points(geo, mat);
             scene.add(particles);
             
-            // Memory for colors
             particles.geometry.userData.targetColors = new Float32Array(count * 3);
-            
             generateShape(0);
         }
 
         function generateShape(index) {
-            currentShape = index;
-            document.getElementById('shape-display').innerText = SHAPES[index].toUpperCase();
+            currentShapeIndex = index;
+            const shape = SHAPES[index];
+            document.getElementById('shape-title').innerText = shape.name;
+            document.getElementById('shape-sub').innerText = shape.type;
             
+            // Auto View: Set target camera Z based on object scale
+            if(isAutoView) {
+                targetCameraZ = shape.scale * 3.5; // Perfect viewing distance formula
+            }
+
             const count = HW.count;
-            const scale = 10;
+            const scale = shape.scale;
             const tColors = particles.geometry.userData.targetColors;
 
             for(let i=0; i<count; i++) {
                 let x,y,z, r,g,b;
                 const i3 = i*3;
 
-                // 1. SPHERE
-                if (index === 0) { 
-                    const phi = Math.acos(-1 + (2*i)/count);
-                    const theta = Math.sqrt(count * Math.PI) * phi;
-                    x = scale * Math.cos(theta) * Math.sin(phi);
-                    y = scale * Math.sin(theta) * Math.sin(phi);
-                    z = scale * Math.cos(phi);
-                    // Digital Cyan
-                    r=0.0; g=1.0; b=0.8;
-                }
-                // 2. CROW
-                else if (index === 1) { 
-                    if(i < count * 0.25) {
-                        const rad = Math.random() * 3;
-                        const ang = Math.random() * 6.28;
-                        const phi = Math.random() * 3.14;
-                        x = rad * Math.cos(ang) * Math.sin(phi);
-                        y = rad * Math.sin(ang) * Math.sin(phi);
-                        z = rad * Math.cos(phi) * 4;
-                        r=0.2; g=0.2; b=0.2; // Grey pixels
-                    } else {
-                        const t = (i - count*0.25)/(count*0.75);
-                        const side = i%2==0 ? 1 : -1;
-                        x = side * (2 + t * 25);
-                        y = Math.sin(t * 3.14) * 8 - Math.abs(x)*0.2;
-                        z = -Math.abs(x)*0.5 + (Math.random()-0.5)*3;
-                        r=0.0; g=0.3; b=0.9; // Blue pixels
+                // --- SHAPE ALGORITHMS ---
+                if(shape.name === "CROW") {
+                    if(i < count*0.25) { 
+                        const rad = 2 + Math.random(); const t = Math.random()*6.28; const p = Math.random()*3.14;
+                        x=rad*Math.cos(t)*Math.sin(p); y=rad*Math.sin(t)*Math.sin(p)*0.8; z=rad*Math.cos(p)*4;
+                        r=0.1; g=0.1; b=0.2; 
+                    } else { 
+                        const t=(i-count*0.25)/(count*0.75); const s=i%2==0?1:-1;
+                        x=s*(2+t*25); y=Math.sin(t*3.14)*10-Math.abs(x)*0.2; z=-Math.abs(x)*0.5+(Math.random()-0.5)*2;
+                        r=0.05+t*0.2; g=0.05+t*0.5; b=0.2+t*0.8;
                     }
                 }
-                // 3. ITACHI
-                else if (index === 2) {
-                    if(i < count * 0.1) {
-                         const ang = Math.random()*6.28; const rad = Math.random()*2;
-                         x=Math.cos(ang)*rad; y=Math.sin(ang)*rad; z=0;
-                         r=0; g=0; b=0; // Pure Black
-                    } else if(i < count * 0.9) {
-                         const blade = i%3;
-                         const rad = (Math.random()*12)+2;
-                         const ang = (Math.random()*1.2) + (blade*2.09);
-                         const s = ang + (rad*0.15);
-                         x=Math.cos(s)*rad; y=Math.sin(s)*rad; z=(Math.random()-0.5);
-                         r=1.0; g=0.0; b=0.0; // Pure Red
+                else if(shape.name === "ITACHI") {
+                    if(i<count*0.1) { const a=Math.random()*6.28; const d=Math.random()*2; x=Math.cos(a)*d; y=Math.sin(a)*d; z=0; r=0;g=0;b=0; }
+                    else if(i<count*0.9) { 
+                        const bld=i%3; const d=(Math.random()*12)+2; const a=(Math.random()*1.2)+(bld*2.09); 
+                        const s=a+(d*0.15); x=Math.cos(s)*d; y=Math.sin(s)*d; z=(Math.random()-0.5); r=0.9;g=0;b=0;
+                    } else { const a=Math.random()*6.28; x=Math.cos(a)*14; y=Math.sin(a)*14; z=0; r=0.5;g=0;b=0; }
+                }
+                else if(shape.name === "HELIX") {
+                     const t=i*0.05; x=Math.cos(t)*6; z=Math.sin(t)*6; y=(i/count-0.5)*40;
+                     if(i%2==0){x=-x;z=-z;} r=0.0;g=1.0;b=0.5;
+                }
+                else if(shape.name === "GALAXY") {
+                     const a=i*0.03; const d=(i/count)*25; x=Math.cos(a)*d; z=Math.sin(a)*d; y=(Math.random()-0.5)*(25-d)*0.3;
+                     r=0.5;g=0.0;b=0.8;
+                }
+                else if(shape.name === "SATURN") {
+                    const isRing=i>count*0.6;
+                    if(!isRing) {
+                        const p=fibonacciSphere(i, count*0.6); x=p.x*scale; y=p.y*scale; z=p.z*scale; r=0.9;g=0.8;b=0.6;
                     } else {
-                         const ang=Math.random()*6.28;
-                         x=Math.cos(ang)*14; y=Math.sin(ang)*14; z=0;
-                         r=0.5; g=0; b=0;
+                        const a=Math.random()*6.28; const d=scale*1.4+Math.random()*scale*1.5;
+                        x=Math.cos(a)*d; z=Math.sin(a)*d; y=(Math.random()-0.5)*0.3; r=0.7;g=0.6;b=0.5;
+                        if(d>scale*2.2 && d<scale*2.4){r=0.1;g=0.1;b=0.1;}
                     }
                 }
-                // 4. HELIX
-                else if (index === 3) {
-                    const t = i * 0.05;
-                    x = Math.cos(t) * 6; z = Math.sin(t) * 6;
-                    y = (i/count - 0.5) * 40;
-                    if(i%2==0) { x=-x; z=-z; }
-                    r=0.0; g=1.0; b=0.2; // Matrix Green
-                }
-                // 5. GALAXY
-                else {
-                    const ang = i * 0.02;
-                    const rad = (i/count)*25;
-                    x = Math.cos(ang)*rad; z = Math.sin(ang)*rad;
-                    y = (Math.random()-0.5) * (25-rad)*0.2;
-                    r=0.8; g=0.0; b=1.0; // Neon Purple
+                else { // STANDARD PLANETS
+                    const p=fibonacciSphere(i, count); x=p.x*scale; y=p.y*scale; z=p.z*scale;
+                    const nX=x/scale; const nY=y/scale; const nZ=z/scale;
+
+                    if(shape.name === "THE SUN") { r=1.0;g=0.5+Math.random()*0.5;b=0.0; if(Math.random()>0.9){r=1;g=1;b=0.8;} }
+                    else if(shape.name === "MERCURY") { r=0.6;g=0.55;b=0.5; }
+                    else if(shape.name === "VENUS") { r=0.9;g=0.8;b=0.6; }
+                    else if(shape.name === "EARTH") {
+                        const noise=Math.sin(nX*5)*Math.cos(nZ*5)*Math.sin(nY*3);
+                        if(Math.abs(nY)>0.9){r=1;g=1;b=1;} else if(noise>0.2){r=0.1;g=0.5;b=0.1;} else {r=0.0;g=0.2;b=0.8;}
+                        if(Math.random()>0.95){r=1;g=1;b=1; x*=1.02;y*=1.02;z*=1.02;}
+                    }
+                    else if(shape.name === "MARS") { r=0.8;g=0.3;b=0.1; if(Math.abs(nY)>0.95){r=1;g=1;b=1;} }
+                    else if(shape.name === "JUPITER") { const bnd=Math.cos(nY*12); if(bnd>0){r=0.7;g=0.6;b=0.5;}else{r=0.9;g=0.85;b=0.8;} if(nX>0.4&&nX<0.7&&nY>-0.4&&nY<-0.2){r=0.8;g=0.2;b=0.1;} }
+                    else if(shape.name === "URANUS") { r=0.4;g=0.9;b=0.9; }
+                    else if(shape.name === "NEPTUNE") { r=0.1;g=0.2;b=0.8; }
                 }
 
-                targetPositions[i3] = x; targetPositions[i3+1] = y; targetPositions[i3+2] = z;
-                tColors[i3] = r; tColors[i3+1] = g; tColors[i3+2] = b;
+                targetPositions[i3]=x; targetPositions[i3+1]=y; targetPositions[i3+2]=z;
+                tColors[i3]=r; tColors[i3+1]=g; tColors[i3+2]=b;
             }
         }
 
-        // --- 5. ANIMATION LOOP ---
-        let lastTime = 0;
-        let frames = 0;
+        function fibonacciSphere(i, numPoints) {
+            const phi = Math.acos(1 - 2 * (i + 0.5) / numPoints);
+            const theta = Math.PI * (1 + Math.sqrt(5)) * i;
+            return { x: Math.cos(theta)*Math.sin(phi), y: Math.cos(phi), z: Math.sin(theta)*Math.sin(phi) };
+        }
 
+        // --- 5. AUTO VIEW LOGIC ---
+        window.toggleAutoView = function() {
+            isAutoView = !isAutoView;
+            const btn = document.getElementById('auto-view-btn');
+            
+            if (isAutoView) {
+                btn.classList.add('active');
+                btn.innerHTML = "⏹ STOP AUTO";
+                showFeedback("CINEMATIC MODE ON");
+                
+                // Immediately switch to next shape to start cycle
+                generateShape((currentShapeIndex + 1) % SHAPES.length);
+                
+                // Start Timer (Switch every 6 seconds)
+                if (autoInterval) clearInterval(autoInterval);
+                autoInterval = setInterval(() => {
+                    generateShape((currentShapeIndex + 1) % SHAPES.length);
+                }, 6000);
+            } else {
+                stopAutoView();
+            }
+        };
+
+        function stopAutoView() {
+            isAutoView = false;
+            const btn = document.getElementById('auto-view-btn');
+            btn.classList.remove('active');
+            btn.innerHTML = "▶ AUTO VIEW";
+            if (autoInterval) clearInterval(autoInterval);
+            showFeedback("MANUAL MODE");
+        }
+
+        // --- 6. ANIMATION LOOP ---
+        let lastTime = 0, frames = 0;
+        
         function animate(now) {
             requestAnimationFrame(animate);
 
             if(now - lastTime >= 1000) {
                 document.getElementById('fps-counter').innerText = `FPS: ${frames}`;
-                frames = 0; lastTime = now;
+                frames=0; lastTime=now;
             }
             frames++;
             time += 0.01;
@@ -306,36 +420,35 @@
 
             processFingers();
 
+            // Pinch (Manual override stops Auto View)
             if (isPinching && !wasPinching) {
-                generateShape((currentShape + 1) % SHAPES.length);
-                showFeedback("NEXT SHAPE");
+                if(isAutoView) stopAutoView();
+                generateShape((currentShapeIndex + 1) % SHAPES.length);
+                showFeedback("NEXT SYSTEM");
             }
             wasPinching = isPinching;
 
-            // PHYSICS LOOP
+            // PHYSICS
             for(let i=0; i<HW.count; i++) {
                 const i3 = i*3;
                 let tx = targetPositions[i3];
                 let ty = targetPositions[i3+1];
                 let tz = targetPositions[i3+2];
 
-                // Shape Animations
-                if(SHAPES[currentShape] === 'Reikuron Crow') {
-                     if(Math.abs(tx)>5) ty += Math.sin(time*8)*1.5; 
-                }
-                if(SHAPES[currentShape] === 'Itachi Sharingan') {
-                     const rot = -0.03;
-                     const x=tx; const y=ty;
-                     tx=x*Math.cos(rot)-y*Math.sin(rot);
-                     ty=x*Math.sin(rot)+y*Math.cos(rot);
-                     targetPositions[i3]=tx; targetPositions[i3+1]=ty;
+                // Shape Movement
+                const name = SHAPES[currentShapeIndex].name;
+                if(name === "THE SUN") { const n=Math.sin(time*2+i); tx+=n*0.5; ty+=n*0.5; }
+                else if(name === "CROW" && Math.abs(tx)>5) ty+=Math.sin(time*8)*1.5;
+                else if(name === "ITACHI") {
+                    const rot = -0.03; const x=tx; const y=ty;
+                    tx=x*Math.cos(rot)-y*Math.sin(rot); ty=x*Math.sin(rot)+y*Math.cos(rot);
+                    targetPositions[i3]=tx; targetPositions[i3+1]=ty;
                 }
 
                 let vx = (tx - pos[i3]) * 0.08;
                 let vy = (ty - pos[i3+1]) * 0.08;
                 let vz = (tz - pos[i3+2]) * 0.08;
 
-                // Hand Logic
                 if(isHandDetected) {
                     const dx = pos[i3] - handPos.x;
                     const dy = pos[i3+1] - handPos.y;
@@ -350,15 +463,22 @@
                 }
 
                 pos[i3] += vx; pos[i3+1] += vy; pos[i3+2] += vz;
-                
-                // Color Lerp (Instant pop for pixels looks better, but smooth is nice too)
-                col[i3] += (tarCol[i3]-col[i3])*0.1; 
-                col[i3+1] += (tarCol[i3+1]-col[i3+1])*0.1;
-                col[i3+2] += (tarCol[i3+2]-col[i3+2])*0.1;
+                col[i3] += (tarCol[i3]-col[i3])*0.05;
+                col[i3+1] += (tarCol[i3+1]-col[i3+1])*0.05;
+                col[i3+2] += (tarCol[i3+2]-col[i3+2])*0.05;
             }
 
-            if(fingerCount !== 3 && fingerCount !== 4 && SHAPES[currentShape] !== 'Itachi Sharingan') {
-                particles.rotation.y += 0.002;
+            // AUTO VIEW CAMERA & ROTATION LOGIC
+            if (isAutoView) {
+                // Smooth Camera Zoom
+                camera.position.z += (targetCameraZ - camera.position.z) * 0.05;
+                // Presentation Spin
+                particles.rotation.y += 0.005; 
+            } else {
+                // Manual Idle Spin
+                if(fingerCount !== 3 && fingerCount !== 4 && SHAPES[currentShapeIndex].name !== 'ITACHI') {
+                    particles.rotation.y += 0.0015;
+                }
             }
 
             particles.geometry.attributes.position.needsUpdate = true;
@@ -368,21 +488,27 @@
 
         function processFingers() {
             if(!isHandDetected || isPinching) return;
+            
+            // If user interacts, STOP Auto View
+            if ((fingerCount >= 1 && fingerCount <= 4) && isAutoView) {
+                stopAutoView();
+            }
+
             if (fingerCount === 1) {
                 camera.position.z = Math.max(10, camera.position.z - SETTINGS.zoomSpeed);
                 showFeedback("ZOOM IN");
             }
             else if (fingerCount === 2) {
-                camera.position.z = Math.min(100, camera.position.z + SETTINGS.zoomSpeed);
+                camera.position.z = Math.min(120, camera.position.z + SETTINGS.zoomSpeed);
                 showFeedback("ZOOM OUT");
             }
             else if (fingerCount === 3) {
                 particles.rotation.y -= SETTINGS.rotSpeed;
-                showFeedback("ROTATE L");
+                showFeedback("ROTATE LEFT");
             }
             else if (fingerCount === 4) {
                 particles.rotation.y += SETTINGS.rotSpeed;
-                showFeedback("ROTATE R");
+                showFeedback("ROTATE RIGHT");
             }
             else if (fingerCount === 5) {
                 showFeedback("CONTROL");
