@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>REIKURON AR SYSTEM</title>
     <style>
-        :root { --primary: #ff0044; --cyan: #00f3ff; --glass: rgba(0, 0, 0, 0.7); }
+        :root { --primary: #ff0044; --cyan: #00f3ff; --glass: rgba(0, 0, 0, 0.4); }
         body { 
             margin: 0; overflow: hidden; background-color: #050505; 
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -20,68 +20,70 @@
 
         /* TOP BRANDING */
         #top-bar {
-            width: 100%; height: 60px;
-            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
+            width: 100%; height: 50px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
             display: flex; align-items: center; justify-content: center;
-            border-bottom: 1px solid rgba(255, 0, 68, 0.3);
         }
         #brand {
-            font-size: 1.8rem; font-weight: 800; letter-spacing: 4px;
+            font-size: 1.5rem; font-weight: 800; letter-spacing: 3px;
             color: var(--primary); text-shadow: 0 0 10px var(--primary);
             text-transform: uppercase;
         }
 
-        /* VISUAL INSTRUCTION PANEL */
+        /* --- MINI GUIDE PANEL (FIXED SIZE) --- */
         #guide-panel {
-            position: absolute; top: 80px; left: 10px;
+            position: absolute; 
+            bottom: 20px; /* Moved to bottom */
+            left: 20px;
             background: var(--glass);
-            padding: 15px;
-            border-radius: 12px;
-            border-left: 3px solid var(--cyan);
-            backdrop-filter: blur(8px);
-            color: white;
-            max-width: 280px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 2px solid var(--cyan);
+            backdrop-filter: blur(5px);
+            color: rgba(255,255,255,0.9);
+            width: 160px; /* Fixed small width */
+            transform: scale(0.9); transform-origin: bottom left;
         }
         
         .guide-item {
-            display: flex; align-items: center; margin-bottom: 12px;
+            display: flex; align-items: center; margin-bottom: 6px;
         }
+        .guide-item:last-child { margin-bottom: 0; }
+        
         .emoji-icon {
-            font-size: 1.8rem; margin-right: 12px; width: 30px; text-align: center;
+            font-size: 1.2rem; margin-right: 8px; width: 20px; text-align: center;
         }
         .guide-text {
-            font-size: 0.9rem; line-height: 1.3;
-        }
-        .guide-title {
-            font-weight: bold; color: var(--cyan); display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 2px;
+            font-size: 0.75rem; line-height: 1.1; font-weight: 500;
         }
 
         /* CURRENT SHAPE DISPLAY */
         #shape-display {
-            position: absolute; top: 80px; right: 20px;
-            font-size: 1.5rem; font-weight: bold; color: white;
+            position: absolute; top: 70px; right: 20px;
+            font-size: 1.2rem; font-weight: bold; color: white;
             text-shadow: 0 0 10px var(--primary); text-align: right;
+            opacity: 0.8;
         }
 
-        /* GESTURE FEEDBACK (Big Center Icons) */
-        .feedback-icon {
+        /* FEEDBACK ICON (Center Screen) */
+        #feedback-icon {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 4rem; color: var(--cyan);
+            font-size: 3rem; color: var(--cyan);
             text-shadow: 0 0 20px black;
             opacity: 0; transition: opacity 0.2s;
             pointer-events: none;
-            border: 2px solid var(--cyan);
-            padding: 20px; border-radius: 20px;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.7);
+            padding: 15px 25px; border-radius: 50px;
+            border: 1px solid var(--cyan);
+            font-weight: bold; white-space: nowrap;
         }
 
-        /* SIMPLE WEBCAM */
+        /* WEBCAM */
         #video-input {
             position: absolute; bottom: 10px; right: 10px; 
-            width: 100px; height: auto; transform: scaleX(-1);
-            border: 1px solid #333; border-radius: 6px; opacity: 0.4;
+            width: 80px; height: auto; transform: scaleX(-1);
+            border: 1px solid #444; border-radius: 4px; opacity: 0.3;
             display: none; z-index: 5;
         }
 
@@ -95,91 +97,46 @@
         }
         #start-btn {
             background: transparent; border: 2px solid var(--primary);
-            color: var(--primary); padding: 15px 40px; font-size: 1.2rem;
+            color: var(--primary); padding: 12px 30px; font-size: 1rem;
             font-weight: bold; border-radius: 30px; cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 0, 68, 0.4);
+            box-shadow: 0 0 15px rgba(255, 0, 68, 0.4);
             margin-top: 20px; text-transform: uppercase;
         }
-        #start-btn:active { transform: scale(0.95); background: var(--primary); color: white; }
-        #loading-text { margin-top: 15px; color: #666; font-size: 0.9rem; display: none; }
-        
-        #error-msg {
-            color: #ff4444; background: rgba(30,0,0,0.9); padding: 15px;
-            border: 1px solid red; margin-top: 20px; display: none;
-            border-radius: 8px; text-align: center;
-        }
+        #loading-text { margin-top: 15px; color: #666; font-size: 0.8rem; display: none; }
+        #error-msg { color: #ff4444; margin-top: 10px; display: none; text-align: center; }
     </style>
 </head>
 <body>
 
-    <!-- START SCREEN -->
     <div id="start-screen">
-        <h1 style="color:white; margin:0; font-size: 2rem;">SYSTEM <span style="color:var(--primary)">REIKURON</span></h1>
-        <p style="color:#aaa; margin-top:5px;">Desktop • Android • iOS</p>
-        
-        <!-- Instruction Preview -->
-        <div style="margin: 20px 0; color: #ddd; text-align: left; background: #111; padding: 15px; border-radius: 10px;">
-            <div>✋ <b>Center:</b> Move Particles</div>
-            <div>👌 <b>Pinch:</b> Change Shape</div>
-            <div>↔️ <b>Edges:</b> Rotate & Zoom</div>
-        </div>
-
-        <button id="start-btn">INITIALIZE SYSTEM</button>
+        <h1 style="color:white; margin:0; font-size: 1.8rem;">SYSTEM <span style="color:var(--primary)">REIKURON</span></h1>
+        <p style="color:#777; font-size: 0.9rem;">Finger Gesture Control</p>
+        <button id="start-btn">INITIALIZE</button>
         <div id="loading-text">Loading Neural Network...</div>
         <div id="error-msg"></div>
     </div>
 
-    <!-- MAIN UI -->
     <div id="ui-layer">
-        <div id="top-bar">
-            <div id="brand">REIKURON</div>
-        </div>
-
+        <div id="top-bar"><div id="brand">REIKURON</div></div>
         <div id="shape-display">Sphere</div>
 
-        <!-- VISUAL GUIDE PANEL -->
+        <!-- NEW MINI GUIDE -->
         <div id="guide-panel">
-            <div class="guide-item">
-                <span class="emoji-icon">✋</span>
-                <div class="guide-text">
-                    <span class="guide-title">CONTROL</span>
-                    Move hand in center to attract particles.
-                </div>
-            </div>
-            <div class="guide-item">
-                <span class="emoji-icon">👌</span>
-                <div class="guide-text">
-                    <span class="guide-title">SWITCH SHAPE</span>
-                    Pinch (Thumb + Index) to explode & switch.
-                </div>
-            </div>
-            <div class="guide-item">
-                <span class="emoji-icon">↔️</span>
-                <div class="guide-text">
-                    <span class="guide-title">ROTATE</span>
-                    Move hand to <b>Left</b> or <b>Right</b> edge.
-                </div>
-            </div>
-            <div class="guide-item">
-                <span class="emoji-icon">↕️</span>
-                <div class="guide-text">
-                    <span class="guide-title">ZOOM</span>
-                    Move hand to <b>Top</b> (In) or <b>Bottom</b> (Out).
-                </div>
-            </div>
+            <div class="guide-item"><span class="emoji-icon">☝️</span><span class="guide-text">1 Finger: Zoom In</span></div>
+            <div class="guide-item"><span class="emoji-icon">✌️</span><span class="guide-text">2 Fingers: Zoom Out</span></div>
+            <div class="guide-item"><span class="emoji-icon">🤟</span><span class="guide-text">3 Fingers: Rotate L</span></div>
+            <div class="guide-item"><span class="emoji-icon">🖖</span><span class="guide-text">4 Fingers: Rotate R</span></div>
+            <div class="guide-item"><span class="emoji-icon">🖐️</span><span class="guide-text">5 Fingers: Control</span></div>
+            <div class="guide-item"><span class="emoji-icon">👌</span><span class="guide-text">Pinch: Change Shape</span></div>
         </div>
 
-        <!-- Big Feedback Icon (Appears when doing gestures) -->
-        <div id="feedback-icon" class="feedback-icon"></div>
+        <div id="feedback-icon"></div>
     </div>
 
-    <!-- WEBCAM (Bottom Right, Small) -->
     <video id="video-input" playsinline webkit-playsinline muted autoplay></video>
 
-    <!-- DEPENDENCIES -->
-    <script type="importmap">
-        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
-    </script>
+    <!-- LIBS -->
+    <script type="importmap">{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }</script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
@@ -193,7 +150,7 @@
             particleCount: isMobile ? 6500 : 22000,
             particleSize: isMobile ? 0.2 : 0.08,
             camZ: 35,
-            zoomSpeed: 0.4,
+            zoomSpeed: 0.5,
             rotSpeed: 0.04
         };
 
@@ -205,9 +162,8 @@
         let isPinching = false, wasPinching = false;
         let currentShape = 0;
         let time = 0;
-        let gestureAction = null; 
+        let fingerCount = 0; // Tracks 0-5 fingers
 
-        // SHAPES
         const SHAPES = ['Sphere', 'Reikuron Crow', 'Itachi Eye', 'Helix', 'Cube'];
 
         // --- THREE.JS ---
@@ -224,13 +180,11 @@
             document.body.appendChild(renderer.domElement);
 
             createParticles();
-            
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
             });
-
             animate();
         }
 
@@ -330,7 +284,7 @@
             }
         }
 
-        // --- LOOP ---
+        // --- ANIMATION LOOP ---
         function animate() {
             requestAnimationFrame(animate);
             time += 0.01;
@@ -338,9 +292,10 @@
             const pos = particles.geometry.attributes.position.array;
             const col = particles.geometry.attributes.color.array;
 
-            handleGestures();
+            // --- GESTURE LOGIC BASED ON FINGER COUNT ---
+            processFingerGestures();
 
-            // Pinch Logic
+            // Toggle Shape (Pinch) - Priority
             if (isPinching && !wasPinching) {
                 generateShape((currentShape + 1) % SHAPES.length);
                 showFeedback("💥 EXPLODE");
@@ -351,8 +306,12 @@
             const isItachi = (currentShape === 2);
             let targetHue = 0.6; 
             if (isItachi) targetHue = 0.0;
-            else if (isHandDetected && gestureAction === null) targetHue = (handPos.x + 10) / 20;
+            // Only change color/attract if 5 fingers are up (Standard Mode)
+            else if (isHandDetected && fingerCount === 5 && !isPinching) {
+                targetHue = (handPos.x + 10) / 20;
+            }
 
+            // PHYSICS LOOP
             for(let i=0; i<CONFIG.particleCount; i++) {
                 const i3 = i*3;
                 let tx = targetPositions[i3];
@@ -373,8 +332,8 @@
                 let vy = (ty - pos[i3+1]) * 0.05;
                 let vz = (tz - pos[i3+2]) * 0.05;
 
-                // Physics
-                if(isHandDetected && gestureAction === null) {
+                // ATTRACTION: Only happens if 5 fingers are up (or Pinch explosion)
+                if(isHandDetected) {
                     const dx = pos[i3] - handPos.x;
                     const dy = pos[i3+1] - handPos.y;
                     const dz = pos[i3+2] - handPos.z;
@@ -385,7 +344,8 @@
                             const f = 5.0 / (Math.sqrt(distSq)+0.1);
                             vx += dx*f; vy += dy*f; vz += dz*f;
                         }
-                    } else {
+                    } else if (fingerCount === 5) {
+                        // "Like before" - Attract particles
                         if(distSq < 400) {
                             const f = (20 - Math.sqrt(distSq)) * 0.003;
                             vx -= dx*f; vy -= dy*f; vz -= dz*f;
@@ -404,45 +364,47 @@
                 col[i3] = c.r; col[i3+1] = c.g; col[i3+2] = c.b;
             }
 
-            if(gestureAction === null && currentShape !== 2) particles.rotation.y += 0.002;
+            // Auto Rotate if no specific rotation gesture
+            if(fingerCount !== 3 && fingerCount !== 4 && currentShape !== 2) {
+                particles.rotation.y += 0.002;
+            }
 
             particles.geometry.attributes.position.needsUpdate = true;
             particles.geometry.attributes.color.needsUpdate = true;
             renderer.render(scene, camera);
         }
 
-        // --- GESTURE LOGIC ---
-        function handleGestures() {
-            gestureAction = null;
-            if(!isHandDetected) return;
-
-            // Define "Dead Zone" in center where nothing happens
-            // Define Edges
-            const edgeX = 18;
-            const edgeY = 12;
-
-            if (handPos.x < -edgeX) {
-                gestureAction = 'rotateL';
-                particles.rotation.y -= CONFIG.rotSpeed;
-                showFeedback("↺ LEFT");
-            } 
-            else if (handPos.x > edgeX) {
-                gestureAction = 'rotateR';
-                particles.rotation.y += CONFIG.rotSpeed;
-                showFeedback("↻ RIGHT");
+        // --- NEW FINGER COUNTING LOGIC ---
+        function processFingerGestures() {
+            if(!isHandDetected || isPinching) {
+                document.getElementById('feedback-icon').style.opacity = '0';
+                return;
             }
-            else if (handPos.y > edgeY) {
-                gestureAction = 'zoomIn';
+
+            // 1 Finger: Zoom In
+            if (fingerCount === 1) {
                 camera.position.z = Math.max(10, camera.position.z - CONFIG.zoomSpeed);
                 showFeedback("🔍 ZOOM IN");
             }
-            else if (handPos.y < -edgeY) {
-                gestureAction = 'zoomOut';
+            // 2 Fingers: Zoom Out
+            else if (fingerCount === 2) {
                 camera.position.z = Math.min(60, camera.position.z + CONFIG.zoomSpeed);
                 showFeedback("🔍 ZOOM OUT");
-            } else {
-                // Hand is in center -> Hide feedback
-                document.getElementById('feedback-icon').style.opacity = '0';
+            }
+            // 3 Fingers: Rotate Left
+            else if (fingerCount === 3) {
+                particles.rotation.y -= CONFIG.rotSpeed;
+                showFeedback("↺ ROTATE L");
+            }
+            // 4 Fingers: Rotate Right
+            else if (fingerCount === 4) {
+                particles.rotation.y += CONFIG.rotSpeed;
+                showFeedback("↻ ROTATE R");
+            }
+            // 5 Fingers: Control (Default)
+            else if (fingerCount === 5) {
+                showFeedback("✋ CONTROL");
+                setTimeout(() => document.getElementById('feedback-icon').style.opacity = '0', 500);
             }
         }
 
@@ -452,7 +414,7 @@
             el.style.opacity = '1';
         }
 
-        // --- SETUP ---
+        // --- MEDIAPIPE LOGIC ---
         const startBtn = document.getElementById('start-btn');
         const video = document.getElementById('video-input');
         
@@ -461,39 +423,28 @@
             document.getElementById('loading-text').style.display = 'block';
 
             if(window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
-                document.getElementById('error-msg').innerHTML = "HTTPS REQUIRED.<br>Use Localhost or GitHub Pages.";
+                document.getElementById('error-msg').innerHTML = "HTTPS REQUIRED.";
                 document.getElementById('error-msg').style.display = 'block';
                 return;
             }
 
             const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
-            hands.setOptions({
-                maxNumHands: 1,
-                modelComplexity: isMobile ? 0 : 1,
-                minDetectionConfidence: 0.5,
-                minTrackingConfidence: 0.5
-            });
+            hands.setOptions({ maxNumHands: 1, modelComplexity: isMobile?0:1, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
             hands.onResults(onResults);
 
             try {
                 initThree();
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
-                });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } });
                 video.srcObject = stream;
-                
                 video.onloadedmetadata = () => {
                     video.play();
                     video.style.display = 'block'; 
-                    const cameraUtils = new Camera(video, {
-                        onFrame: async () => await hands.send({image: video}),
-                        width: 640, height: 480
-                    });
+                    const cameraUtils = new Camera(video, { onFrame: async () => await hands.send({image: video}), width: 640, height: 480 });
                     cameraUtils.start();
                 };
             } catch (err) {
                 console.error(err);
-                document.getElementById('error-msg').innerHTML = "Camera Access Denied.";
+                document.getElementById('error-msg').innerHTML = "Camera Denied.";
                 document.getElementById('error-msg').style.display = 'block';
             }
         });
@@ -511,18 +462,55 @@
                 const index = lm[8];
                 const thumb = lm[4];
 
+                // Map Coordinates
                 const rangeX = isMobile ? 25 : 40;
                 const rangeY = isMobile ? 35 : 25;
                 const targetX = (0.5 - index.x) * rangeX;
                 const targetY = (0.5 - index.y) * rangeY;
-
                 handPos.lerp(new THREE.Vector3(targetX, targetY, 0), 0.2);
                 
+                // Check Pinch
                 const d = Math.sqrt(Math.pow(index.x - thumb.x, 2) + Math.pow(index.y - thumb.y, 2));
                 isPinching = (d < 0.05);
+
+                // Count Fingers (Simple logic: Check if tip is above PIP joint)
+                // 8: Index Tip, 6: Index PIP
+                // 12: Mid Tip, 10: Mid PIP
+                // 16: Ring Tip, 14: Ring PIP
+                // 20: Pinky Tip, 18: Pinky PIP
+                // Thumb is tricky, we'll exclude it from "standing" count logic usually, 
+                // but let's just count the 4 fingers and assume Thumb is open if 4 are open.
+                let count = 0;
+                if (lm[8].y < lm[6].y) count++;  // Index
+                if (lm[12].y < lm[10].y) count++; // Middle
+                if (lm[16].y < lm[14].y) count++; // Ring
+                if (lm[20].y < lm[18].y) count++; // Pinky
+                
+                // If 4 fingers are up, we call it 5 (Open Hand) for simplicity + Thumb usually follows
+                if (count === 4) {
+                    // Check thumb just in case it's tucked? 
+                    // Let's just assume count 4 fingers = 4 state. 
+                    // But wait, "Stand 5" means open hand.
+                    // Let's refine:
+                    // 1 finger = Index up
+                    // 2 fingers = Index + Mid up
+                    // 3 fingers = Index + Mid + Ring
+                    // 4 fingers = Index + Mid + Ring + Pinky
+                    // 5 fingers = All 5.
+                    
+                    // Let's verify Thumb. Thumb tip x vs Thumb IP x depends on hand side.
+                    // Easier: check distance thumb tip to pinky knuckle (17). If far, it's open.
+                    const thumbOpen = (Math.sqrt(Math.pow(lm[4].x - lm[17].x, 2)) > 0.15);
+                    if (thumbOpen) count = 5;
+                    else count = 4;
+                }
+                
+                fingerCount = count;
+
             } else {
                 isHandDetected = false;
                 isPinching = false;
+                fingerCount = 0;
             }
         }
     </script>
