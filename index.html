@@ -3,31 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <title>REIKURON OS // AR SYSTEM</title>
+    <title>REIKURON AR SYSTEM</title>
     <style>
         :root { 
             --primary: #00f3ff; 
-            --secondary: #ff0055;
-            --bg: #030303; 
-            --glass: rgba(10, 20, 30, 0.65); 
+            --bg: #020202; 
+            --glass: rgba(10, 25, 40, 0.75); 
         }
         body { 
             margin: 0; overflow: hidden; background-color: var(--bg); 
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             touch-action: none; color: white;
         }
 
-        /* --- 1. THE AMAZING START SCREEN (CSS UPGRADE 💀) --- */
+        /* --- 1. CYBERPUNK START SCREEN --- */
         #start-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at 50% 50%, #111 0%, #000 100%);
             z-index: 1000; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            overflow: hidden;
-            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            overflow: hidden; transition: opacity 0.8s;
         }
-
-        /* Cyber Grid Background Animation */
         .grid-bg {
             position: absolute; width: 200%; height: 200%;
             background-image: 
@@ -35,150 +31,109 @@
                 linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
             background-size: 50px 50px;
             transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
-            animation: gridMove 20s linear infinite;
-            pointer-events: none;
+            animation: gridMove 20s linear infinite; pointer-events: none;
         }
         @keyframes gridMove { 0% { transform: perspective(500px) rotateX(60deg) translateY(0); } 100% { transform: perspective(500px) rotateX(60deg) translateY(50px); } }
-
-        /* Typography */
-        .hero-title {
-            font-size: 4rem; font-weight: 900; letter-spacing: 8px;
-            color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.8);
-            text-transform: uppercase; position: relative; z-index: 2;
-            animation: glowText 3s infinite alternate;
-        }
-        .hero-title span { color: var(--primary); -webkit-text-stroke: 0; text-shadow: 0 0 30px var(--primary); }
         
-        .hero-sub {
-            font-family: 'Courier New', monospace; color: var(--primary);
-            margin-top: 10px; letter-spacing: 2px; opacity: 0.8; z-index: 2;
-            border-right: 2px solid var(--primary);
-            white-space: nowrap; overflow: hidden;
-            animation: type 3s steps(30, end), blink .75s step-end infinite;
+        .hero-title {
+            font-size: 3.5rem; font-weight: 900; letter-spacing: 5px;
+            text-shadow: 0 0 30px var(--primary); z-index: 2; text-align: center;
         }
+        .hero-sub { color: #888; letter-spacing: 2px; margin-top: 10px; z-index: 2; font-size: 1rem; }
 
-        /* The Cyber Button */
         #start-btn {
-            margin-top: 50px; position: relative; z-index: 2;
-            background: rgba(0, 243, 255, 0.1);
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            padding: 18px 60px; font-size: 1.2rem; font-weight: 800;
-            letter-spacing: 3px; text-transform: uppercase;
-            cursor: pointer; overflow: hidden; transition: 0.3s;
-            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+            margin-top: 40px; z-index: 2;
+            background: rgba(0, 243, 255, 0.1); color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 15px 50px; font-size: 1.2rem; font-weight: 800;
+            letter-spacing: 3px; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            border-radius: 50px;
         }
-        #start-btn:hover {
-            background: var(--primary); color: #000;
-            box-shadow: 0 0 50px var(--primary); transform: scale(1.05);
+        #start-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 50px var(--primary); }
+        #loader {
+            display: none; margin-top: 30px; width: 40px; height: 40px;
+            border: 3px solid rgba(0, 243, 255, 0.2); border-radius: 50%;
+            border-top-color: var(--primary); animation: spin 1s infinite; z-index: 2;
         }
-        #start-btn::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
-            transition: 0.5s;
-        }
-        #start-btn:hover::before { left: 100%; }
-
-        /* Loader Ring */
-        .loader {
-            display: none; margin-top: 40px; width: 50px; height: 50px;
-            border: 3px solid rgba(0, 243, 255, 0.3); border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s ease-in-out infinite; z-index: 2;
-        }
-
-        /* Animations */
-        @keyframes glowText { from { text-shadow: 0 0 10px rgba(0,243,255,0.5); } to { text-shadow: 0 0 30px rgba(0,243,255,1); } }
-        @keyframes type { from { width: 0; } to { width: 100%; } }
-        @keyframes blink { from, to { border-color: transparent; } 50% { border-color: var(--primary); } }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-
-        /* --- 2. MAIN INTERFACE --- */
+        /* --- 2. MAIN UI --- */
         #ui-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 10;
         }
 
         #top-bar {
-            width: 100%; height: 80px;
-            background: linear-gradient(180deg, black 0%, transparent 100%);
+            width: 100%; height: 70px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
             display: flex; align-items: center; justify-content: center;
         }
-        #brand {
-            font-size: 1.5rem; font-weight: 800; letter-spacing: 6px;
-            color: white; text-shadow: 0 0 20px var(--primary);
-        }
+        #brand { font-size: 1.8rem; font-weight: 800; letter-spacing: 6px; text-shadow: 0 0 20px var(--primary); }
 
-        #shape-display {
-            position: absolute; top: 80px; right: 25px; text-align: right;
-        }
-        #shape-title {
-            font-size: 2.5rem; font-weight: 900; color: white; margin: 0;
-            text-shadow: 0 0 20px black; letter-spacing: 1px;
-        }
-        #shape-sub { color: var(--primary); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px;}
+        #shape-display { position: absolute; top: 80px; right: 25px; text-align: right; }
+        #shape-title { font-size: 2.2rem; font-weight: 800; margin: 0; text-shadow: 0 0 10px black; }
+        #shape-sub { color: var(--primary); font-size: 0.9rem; font-weight: 700; letter-spacing: 2px; }
 
-        /* Guide Panel */
+        /* GUIDE PANEL + AUTO BUTTON */
         #guide-panel {
             position: absolute; bottom: 30px; left: 30px;
-            background: var(--glass); padding: 15px;
-            border-radius: 10px; border-left: 3px solid var(--primary);
-            backdrop-filter: blur(15px); color: #eee; width: 190px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            background: var(--glass); padding: 20px;
+            border-radius: 12px; border-left: 4px solid var(--primary);
+            backdrop-filter: blur(15px); color: #fff; width: 180px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
             transform-origin: bottom left; pointer-events: auto;
         }
         .guide-item { 
             display: flex; align-items: center; margin-bottom: 8px; 
-            font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px;
+            font-size: 0.8rem; font-weight: 600; text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
-        .emoji { width: 30px; text-align: center; margin-right: 8px; font-size: 1rem; text-shadow: 0 0 10px var(--primary); }
+        .emoji { width: 25px; text-align: center; margin-right: 10px; font-size: 1.1rem; }
 
-        /* Auto View Button */
+        /* THE AUTO BUTTON (#7) */
         .auto-btn {
-            margin-top: 15px; padding-top: 10px;
-            border-top: 1px dashed rgba(255,255,255,0.3);
+            margin-top: 15px; padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.2);
             color: var(--primary); cursor: pointer; transition: 0.3s;
         }
-        .auto-btn:hover { color: white; text-shadow: 0 0 10px var(--primary); background: rgba(0,243,255,0.1); }
-        .active-mode { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+        .auto-btn:hover { color: white; text-shadow: 0 0 10px var(--primary); }
+        .active-auto { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
 
-        /* Feedback Text */
+        /* CENTER FEEDBACK */
         #feedback {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 1.5rem; color: white; 
-            background: rgba(0,0,0,0.8); padding: 15px 40px; border-radius: 50px;
-            border: 1px solid var(--primary); box-shadow: 0 0 30px var(--primary);
+            font-size: 1.8rem; color: white; 
+            background: rgba(0,0,0,0.85); padding: 15px 40px; border-radius: 50px;
+            border: 2px solid var(--primary); box-shadow: 0 0 40px var(--primary);
             opacity: 0; transition: opacity 0.3s; pointer-events: none;
-            font-weight: 800; letter-spacing: 2px; white-space: nowrap; z-index: 20;
+            font-weight: 900; letter-spacing: 2px; white-space: nowrap;
         }
 
-        /* Webcam */
+        /* WEBCAM (VISIBLE) */
         #video-input {
             position: absolute; bottom: 20px; right: 20px; 
-            width: 120px; height: auto; transform: scaleX(-1);
-            border-radius: 8px; opacity: 0.5;
-            border: 1px solid rgba(255,255,255,0.2);
-            display: none; z-index: 5; transition: opacity 0.3s;
+            width: 130px; height: auto; transform: scaleX(-1);
+            border-radius: 10px; opacity: 0.6;
+            border: 2px solid rgba(255,255,255,0.1);
+            display: none; z-index: 5; transition: opacity 0.3s, transform 0.3s;
         }
-        #video-input:hover { opacity: 1; }
+        #video-input:hover { opacity: 1; transform: scaleX(-1) scale(1.1); }
 
     </style>
 </head>
 <body>
 
-    <!-- AMAZING START SCREEN -->
+    <!-- 1. CYBERPUNK START SCREEN -->
     <div id="start-screen">
         <div class="grid-bg"></div>
         <div class="hero-title">REIKURON <span>AR</span></div>
-        <div class="hero-sub">SYSTEM INITIALIZATION // READY</div>
-        <button id="start-btn">ENGAGE SYSTEM</button>
-        <div class="loader" id="loader"></div>
-        <p id="status-text" style="margin-top:10px; color:#666; font-size:0.8rem; display:none;">Accessing Neural Network...</p>
+        <div class="hero-sub">HOLOGRAPHIC PARTICLE ENGINE</div>
+        <button id="start-btn">INITIALIZE</button>
+        <div id="loader"></div>
+        <p id="loading-text" style="margin-top:15px; color:#666; font-size:0.8rem; display:none;">Calibrating Sensors...</p>
     </div>
 
-    <!-- MAIN UI -->
+    <!-- 2. UI LAYER -->
     <div id="ui-layer">
         <div id="top-bar"><div id="brand">REIKURON</div></div>
         
@@ -194,7 +149,7 @@
             <div class="guide-item"><span class="emoji">🖖</span> 4. Rotate Right</div>
             <div class="guide-item"><span class="emoji">🖐️</span> 5. Control</div>
             <div class="guide-item"><span class="emoji">👌</span> 6. Next Shape</div>
-            <!-- BUTTON 7 -->
+            <!-- ITEM 7: AUTO VIEW BUTTON -->
             <div class="guide-item auto-btn" id="auto-btn-el" onclick="toggleAutoView()">
                 <span class="emoji" id="auto-icon">▶️</span> 7. AUTO VIEW
             </div>
@@ -203,10 +158,10 @@
         <div id="feedback"></div>
     </div>
 
-    <!-- WEBCAM -->
+    <!-- 3. WEBCAM -->
     <video id="video-input" playsinline webkit-playsinline muted autoplay></video>
 
-    <!-- DEPENDENCIES -->
+    <!-- LIBS -->
     <script type="importmap">{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }</script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
@@ -216,10 +171,10 @@
         import * as THREE from 'three';
 
         // --- CONFIG ---
-        const HW = { count: 35000, ratio: window.devicePixelRatio > 2 ? 1.5 : window.devicePixelRatio, size: 0.22 };
+        const HW = { count: 35000, ratio: 1.5, size: 0.22 }; // High quality settings
         const SETTINGS = { camZ: 40, zoomSpeed: 0.5, rotSpeed: 0.04 };
 
-        // --- SHAPES ---
+        // --- SHAPE DATA ---
         const SHAPES = [
             { name: "THE SUN", type: "Star", scale: 14 },
             { name: "MERCURY", type: "Planet", scale: 8 },
@@ -227,12 +182,12 @@
             { name: "EARTH", type: "Home", scale: 10 },
             { name: "MARS", type: "Planet", scale: 8.5 },
             { name: "JUPITER", type: "Gas Giant", scale: 13 },
-            { name: "SATURN", type: "Ringed Giant", scale: 11 },
+            { name: "SATURN", type: "Ringed Giant", scale: 12 },
             { name: "URANUS", type: "Ice Giant", scale: 10 },
             { name: "NEPTUNE", type: "Ice Giant", scale: 10 },
             { name: "CROW", type: "Reikuron Special", scale: 11 },
             { name: "ITACHI", type: "Sharingan", scale: 11 },
-            { name: "HELIX", type: "Structure", scale: 12 },
+            { name: "HELIX", type: "Structure", scale: 13 },
             { name: "GALAXY", type: "Spiral", scale: 16 }
         ];
 
@@ -248,7 +203,7 @@
         let autoInterval = null;
         let targetCamZ = 40;
 
-        // --- TEXTURE ---
+        // --- VISUALS: REALISTIC STARDUST TEXTURE ---
         function createGlowTexture() {
             const canvas = document.createElement('canvas'); canvas.width = 64; canvas.height = 64;
             const ctx = canvas.getContext('2d');
@@ -260,7 +215,7 @@
             return new THREE.Texture(canvas);
         }
 
-        // --- INIT ---
+        // --- INIT THREE.JS ---
         function initThree() {
             scene = new THREE.Scene();
             scene.fog = new THREE.FogExp2(0x020202, 0.015);
@@ -322,31 +277,37 @@
                 let x,y,z, r,g,b;
                 const i3 = i*3;
 
+                // CROW
                 if(shape.name === "CROW") {
                     if(i < count*0.25) { const rad=2+Math.random(); const a=Math.random()*6.28; const p=Math.random()*3.14; x=rad*Math.cos(a)*Math.sin(p); y=rad*Math.sin(a)*Math.sin(p)*0.8; z=rad*Math.cos(p)*4; r=0.1;g=0.1;b=0.2; }
                     else { const t=(i-count*0.25)/(count*0.75); const s=i%2==0?1:-1; x=s*(2+t*25); y=Math.sin(t*3.14)*10-Math.abs(x)*0.2; z=-Math.abs(x)*0.5+(Math.random()-0.5)*2; r=0.05+t*0.2; g=0.05+t*0.5; b=0.2+t*0.8; }
                 }
+                // ITACHI
                 else if(shape.name === "ITACHI") {
                     if(i<count*0.1) { const a=Math.random()*6.28; const d=Math.random()*2; x=Math.cos(a)*d; y=Math.sin(a)*d; z=0; r=0;g=0;b=0; }
                     else if(i<count*0.9) { const bld=i%3; const d=(Math.random()*12)+2; const a=(Math.random()*1.2)+(bld*2.09); const s=a+(d*0.15); x=Math.cos(s)*d; y=Math.sin(s)*d; z=(Math.random()-0.5); r=0.9;g=0;b=0; }
                     else { const a=Math.random()*6.28; x=Math.cos(a)*14; y=Math.sin(a)*14; z=0; r=0.5;g=0;b=0; }
                 }
+                // HELIX
                 else if(shape.name === "HELIX") { const t=i*0.05; x=Math.cos(t)*6; z=Math.sin(t)*6; y=(i/count-0.5)*40; if(i%2==0){x=-x;z=-z;} r=0.0;g=1.0;b=0.5; }
+                // GALAXY
                 else if(shape.name === "GALAXY") { const a=i*0.02; const d=(i/count)*25; x=Math.cos(a)*d; z=Math.sin(a)*d; y=(Math.random()-0.5)*(25-d)*0.3; r=0.5;g=0.0;b=0.8; }
+                // SATURN
                 else if(shape.name === "SATURN") {
                     const isRing=i>count*0.6;
                     if(!isRing) { const p=fibSphere(i, count*0.6); x=p.x*scale; y=p.y*scale; z=p.z*scale; r=0.9;g=0.8;b=0.6; }
                     else { const a=Math.random()*6.28; const d=scale*1.4+Math.random()*scale*1.5; x=Math.cos(a)*d; z=Math.sin(a)*d; y=(Math.random()-0.5)*0.3; r=0.7;g=0.6;b=0.5; if(d>scale*2.2 && d<scale*2.4){r=0.1;g=0.1;b=0.1;} }
                 }
+                // PLANETS
                 else {
                     const p=fibSphere(i, count); x=p.x*scale; y=p.y*scale; z=p.z*scale;
                     const nX=x/scale; const nY=y/scale; const nZ=z/scale;
                     if(shape.name === "THE SUN") { r=1.0;g=0.5+Math.random()*0.5;b=0.0; if(Math.random()>0.9){r=1;g=1;b=0.8;} }
                     else if(shape.name === "MERCURY") { r=0.6;g=0.55;b=0.5; }
                     else if(shape.name === "VENUS") { r=0.9;g=0.8;b=0.6; }
-                    else if(shape.name === "EARTH") { const noise=Math.sin(nX*5)*Math.cos(nZ*5)*Math.sin(nY*3); if(Math.abs(nY)>0.9){r=1;g=1;b=1;} else if(noise>0.2){r=0.1;g=0.5;b=0.1;} else {r=0.0;g=0.2;b=0.8;} if(Math.random()>0.95){r=1;g=1;b=1; x*=1.02;y*=1.02;z*=1.02;} }
-                    else if(shape.name === "MARS") { r=0.9;g=0.3;b=0.1; if(Math.abs(nY)>0.95){r=1;g=1;b=1;} }
-                    else if(shape.name === "JUPITER") { const bnd=Math.cos(nY*12); if(bnd>0){r=0.7;g=0.6;b=0.5;}else{r=0.9;g=0.85;b=0.8;} if(nX>0.4&&nX<0.7&&nY>-0.4&&nY<-0.2){r=0.8;g=0.2;b=0.1;} }
+                    else if(shape.name === "EARTH") { const noise=Math.sin(nX*5)*Math.cos(nZ*5)*Math.sin(nY*3); if(Math.abs(nY)>0.9){r=1;g=1;b=1;} else if(noise>0.2){r=0.1;g=0.5;b=0.1;} else {r=0.0;g=0.2;b=0.8;} }
+                    else if(shape.name === "MARS") { r=0.9;g=0.3;b=0.1; }
+                    else if(shape.name === "JUPITER") { const bnd=Math.cos(nY*12); if(bnd>0){r=0.7;g=0.6;b=0.5;}else{r=0.9;g=0.85;b=0.8;} }
                     else if(shape.name === "URANUS") { r=0.4;g=0.9;b=0.9; }
                     else if(shape.name === "NEPTUNE") { r=0.1;g=0.2;b=0.8; }
                 }
@@ -362,15 +323,15 @@
             return { x: Math.cos(theta)*Math.sin(phi), y: Math.cos(phi), z: Math.sin(theta)*Math.sin(phi) };
         }
 
-        // --- AUTO VIEW ---
+        // --- 5. AUTO VIEW & CONTROLS ---
         window.toggleAutoView = function() {
             isAutoView = !isAutoView;
             const btn = document.getElementById('auto-btn-el');
             const icon = document.getElementById('auto-icon');
             if (isAutoView) {
-                btn.classList.add('active-mode');
+                btn.classList.add('active-auto');
                 icon.innerText = "⏹";
-                showFeedback("AUTO PILOT ENGAGED");
+                showFeedback("CINEMATIC MODE");
                 generateShape((currentShapeIndex + 1) % SHAPES.length);
                 if(autoInterval) clearInterval(autoInterval);
                 autoInterval = setInterval(() => generateShape((currentShapeIndex + 1) % SHAPES.length), 6000);
@@ -382,13 +343,13 @@
         function stopAutoView() {
             isAutoView = false;
             const btn = document.getElementById('auto-btn-el');
-            btn.classList.remove('active-mode');
+            btn.classList.remove('active-auto');
             document.getElementById('auto-icon').innerText = "▶️";
             if(autoInterval) clearInterval(autoInterval);
             showFeedback("MANUAL CONTROL");
         }
 
-        // --- ANIMATION ---
+        // --- 6. ANIMATION ---
         function animate() {
             requestAnimationFrame(animate);
             time += 0.01;
@@ -445,7 +406,7 @@
             else if (fingerCount===2) { camera.position.z = Math.min(120, camera.position.z + SETTINGS.zoomSpeed); showFeedback("ZOOM OUT"); }
             else if (fingerCount===3) { particles.rotation.y -= SETTINGS.rotSpeed; showFeedback("ROTATE L"); }
             else if (fingerCount===4) { particles.rotation.y += SETTINGS.rotSpeed; showFeedback("ROTATE R"); }
-            else if (fingerCount===5) { showFeedback("CONTROL"); }
+            else if (fingerCount===5) { showFeedback("MANUAL CONTROL"); }
         }
 
         let feedbackTimer;
@@ -457,16 +418,16 @@
             }
         }
 
-        // --- STARTUP ---
+        // --- 7. START ---
         const startBtn = document.getElementById('start-btn');
         const startScreen = document.getElementById('start-screen');
         const video = document.getElementById('video-input');
         const loader = document.getElementById('loader');
-        const status = document.getElementById('status-text');
+        const loadText = document.getElementById('loading-text');
 
         startBtn.addEventListener('click', async () => {
             if(location.protocol!=='https:' && location.hostname!=='localhost') { alert("HTTPS Required"); return; }
-            startBtn.style.display = 'none'; loader.style.display = 'block'; status.style.display = 'block';
+            startBtn.style.display = 'none'; loader.style.display = 'block'; loadText.style.display = 'block';
 
             const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
             hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
@@ -477,10 +438,9 @@
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: {ideal:640}, height: {ideal:480} } });
                 video.srcObject = stream;
                 video.onloadedmetadata = () => {
-                    video.play(); video.style.display = 'block';
+                    video.play(); video.style.display = 'block'; // Make Webcam Visible
                     const cameraUtils = new Camera(video, { onFrame: async () => await hands.send({image: video}), width: 640, height: 480 });
                     cameraUtils.start();
-                    // Fade out start screen
                     startScreen.style.opacity = '0';
                     setTimeout(() => startScreen.style.display = 'none', 800);
                 };
