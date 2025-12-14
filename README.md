@@ -21,14 +21,12 @@
 - **No Installation**: Runs directly in browser
 
 ## 🎮 Gesture Controls
-| Gesture | Action | Effect |
-|---------|--------|--------|
-| ✋ Move hand | Particle flow | Particles follow your hand |
-| 🤏 Pinch fingers | Next shape + explosion | Changes shape with cool effect |
-| 👈 Hand to left edge | Rotate left | Spins particles counter-clockwise |
-| 👉 Hand to right edge | Rotate right | Spins particles clockwise |
-| 👆 Hand to top edge | Zoom in | Camera moves closer |
-| 👇 Hand to bottom edge | Zoom out | Camera moves away |
+☝️ 1 Finger: Zoom In.
+✌️ 2 Fingers: Zoom Out.
+🤟 3 Fingers: Rotate Left.
+🖖 4 Fingers: Rotate Right.
+🖐️ 5 Fingers (Open Hand): Move & Attract Particles (Standard Mode).
+👌 Pinch: Explode & Switch Shape.
 
 ## 🚀 Quick Start
 
