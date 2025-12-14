@@ -1,4 +1,3 @@
-```markdown
 # REIKURON AR System 🎮
 
 **Real-time 3D particles controlled by hand gestures**  
@@ -38,12 +37,15 @@ Just visit: **[reikuron-riyad-dev.github.io/reikuron.github.io](https://reikuron
 
 ### Option 2: Run Locally
 ```bash
-# Clone repository
+# Clone repositor
+```markdown
 git clone https://github.com/reikuron-riyad-dev/reikuron.github.io.git
+```
 
 # Open in browser
 # Simply double-click index.html or use:
-cd reikuron.github.io
+```markdown
+ reikuron.github.io
 python -m http.server 8000
 # Then open: http://localhost:8000
 ```
