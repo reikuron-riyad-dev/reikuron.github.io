@@ -3,12 +3,12 @@
 **Real-time 3D particles controlled by hand gestures**  
 *No controllers needed - just your webcam and hands!*
 
-[![Live Demo](https://img.shields.io/badge/LIVE_DEMO-Click_Here-ff0044?style=for-the-badge)](https://reikuron-riyad-dev.github.io/reikuron.github.io/)
+[![Live Demo](https://img.shields.io/badge/LIVE_DEMO-Click_Here-ff0044?style=for-the-badge)](https://reikuron-riyad-dev.github.io/Beautiful-AR-System/)
 [![Three.js](https://img.shields.io/badge/Three.js-3D_Rendering-black?style=flat)](https://threejs.org/)
 [![MediaPipe](https://img.shields.io/badge/MediaPipe-AI_Tracking-00f3ff?style=flat)](https://mediapipe.dev/)
 
 ## 🎥 Quick Demo
-1. **Visit** [Live Site](https://reikuron-riyad-dev.github.io/reikuron.github.io/)
+1. **Visit** [Live Site](https://reikuron-riyad-dev.github.io/Beautiful-AR-System/)
 2. **Click** "INITIALIZE SYSTEM"
 3. **Allow** camera access
 4. **Move** your hands to control particles!
@@ -33,7 +33,7 @@
 ## 🚀 Quick Start
 
 ### Option 1: Live Demo
-Just visit: **[reikuron-riyad-dev.github.io/reikuron.github.io](https://reikuron-riyad-dev.github.io/reikuron.github.io/)**
+Just visit: **[reikuron-riyad-dev.github.io/reikuron.github.io](https://reikuron-riyad-dev.github.io/Beautiful-AR-System/)**
 
 ### Option 2: Run Locally
 ```bash
