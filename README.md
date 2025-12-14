@@ -39,7 +39,7 @@ Just visit: **[reikuron-riyad-dev.github.io/reikuron.github.io](https://reikuron
 ```bash
 # Clone repositor
 ```markdown
-git clone https://github.com/reikuron-riyad-dev/reikuron.github.io.git
+git clone https://github.com/reikuron-riyad-dev/Beautiful-AR-System
 ```
 
 # Open in browser
