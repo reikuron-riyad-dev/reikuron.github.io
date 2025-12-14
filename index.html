@@ -3,139 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <title>REIKURON AR SYSTEM</title>
+    <title>REIKURON PIXEL AR SYSTEM</title>
     <style>
-        :root { --primary: #ff0044; --cyan: #00f3ff; --glass: rgba(0, 0, 0, 0.4); }
+        :root { --primary: #00ffcc; --bg: #050505; }
         body { 
-            margin: 0; overflow: hidden; background-color: #050505; 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; overflow: hidden; background-color: var(--bg); 
+            font-family: 'Courier New', Courier, monospace; /* Retro font */
             touch-action: none;
         }
 
-        /* --- UI LAYER --- */
         #ui-layer {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: 10;
         }
 
-        /* TOP BRANDING */
+        /* BRANDING */
         #top-bar {
-            width: 100%; height: 50px;
-            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+            width: 100%; height: 60px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%);
             display: flex; align-items: center; justify-content: center;
+            border-bottom: 1px solid rgba(0, 255, 204, 0.2);
         }
         #brand {
-            font-size: 1.5rem; font-weight: 800; letter-spacing: 3px;
-            color: var(--primary); text-shadow: 0 0 10px var(--primary);
+            font-size: 1.8rem; font-weight: 800; letter-spacing: 5px;
+            color: var(--primary); text-shadow: 4px 4px 0px rgba(0, 100, 100, 0.5);
             text-transform: uppercase;
         }
 
-        /* --- MINI GUIDE PANEL (FIXED SIZE) --- */
-        #guide-panel {
-            position: absolute; 
-            bottom: 20px; /* Moved to bottom */
-            left: 20px;
-            background: var(--glass);
-            padding: 10px;
-            border-radius: 8px;
-            border-left: 2px solid var(--cyan);
-            backdrop-filter: blur(5px);
-            color: rgba(255,255,255,0.9);
-            width: 160px; /* Fixed small width */
-            transform: scale(0.9); transform-origin: bottom left;
-        }
-        
-        .guide-item {
-            display: flex; align-items: center; margin-bottom: 6px;
-        }
-        .guide-item:last-child { margin-bottom: 0; }
-        
-        .emoji-icon {
-            font-size: 1.2rem; margin-right: 8px; width: 20px; text-align: center;
-        }
-        .guide-text {
-            font-size: 0.75rem; line-height: 1.1; font-weight: 500;
-        }
-
-        /* CURRENT SHAPE DISPLAY */
+        /* SHAPE NAME */
         #shape-display {
             position: absolute; top: 70px; right: 20px;
-            font-size: 1.2rem; font-weight: bold; color: white;
-            text-shadow: 0 0 10px var(--primary); text-align: right;
-            opacity: 0.8;
+            font-size: 1.5rem; font-weight: 800; color: white;
+            text-align: right; text-shadow: 2px 2px 0px #000;
         }
 
-        /* FEEDBACK ICON (Center Screen) */
-        #feedback-icon {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 3rem; color: var(--cyan);
-            text-shadow: 0 0 20px black;
-            opacity: 0; transition: opacity 0.2s;
-            pointer-events: none;
-            background: rgba(0,0,0,0.7);
-            padding: 15px 25px; border-radius: 50px;
-            border: 1px solid var(--cyan);
-            font-weight: bold; white-space: nowrap;
+        /* PIXEL GUIDE */
+        #guide-panel {
+            position: absolute; bottom: 20px; left: 20px;
+            background: rgba(0, 20, 20, 0.6); padding: 15px;
+            border: 2px solid var(--primary);
+            color: #eee; width: 160px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.5); /* Hard shadow for retro look */
+            transform: scale(0.9); transform-origin: bottom left;
         }
+        .guide-item { display: flex; align-items: center; margin-bottom: 6px; font-size: 0.8rem; font-weight: bold; }
+        .emoji { width: 25px; text-align: center; margin-right: 5px; }
 
-        /* WEBCAM */
-        #video-input {
-            position: absolute; bottom: 10px; right: 10px; 
-            width: 80px; height: auto; transform: scaleX(-1);
-            border: 1px solid #444; border-radius: 4px; opacity: 0.3;
-            display: none; z-index: 5;
+        /* FEEDBACK */
+        #feedback {
+            position: absolute; bottom: 150px; left: 50%; transform: translateX(-50%);
+            font-size: 1.5rem; color: var(--primary); 
+            background: black; padding: 10px 20px; border: 2px solid var(--primary);
+            opacity: 0; transition: opacity 0.2s; pointer-events: none;
+            font-weight: bold; box-shadow: 5px 5px 0px rgba(0,255,204,0.3);
         }
 
         /* START SCREEN */
         #start-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 100;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            transition: opacity 0.5s;
+            background: #000;
+            z-index: 100; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: opacity 0.5s;
         }
         #start-btn {
-            background: transparent; border: 2px solid var(--primary);
-            color: var(--primary); padding: 12px 30px; font-size: 1rem;
-            font-weight: bold; border-radius: 30px; cursor: pointer;
-            box-shadow: 0 0 15px rgba(255, 0, 68, 0.4);
-            margin-top: 20px; text-transform: uppercase;
+            background: black; border: 2px solid var(--primary);
+            color: var(--primary); padding: 15px 40px; font-size: 1.2rem;
+            font-weight: bold; cursor: pointer; margin-top: 30px;
+            box-shadow: 5px 5px 0px var(--primary);
+            font-family: 'Courier New', Courier, monospace;
         }
-        #loading-text { margin-top: 15px; color: #666; font-size: 0.8rem; display: none; }
-        #error-msg { color: #ff4444; margin-top: 10px; display: none; text-align: center; }
+        #start-btn:active { transform: translate(2px, 2px); box-shadow: 3px 3px 0px var(--primary); }
+        
+        #fps-counter { position: absolute; top: 10px; left: 10px; color: #0f0; font-size: 12px; }
+        #video-input { display: none; }
     </style>
 </head>
 <body>
 
     <div id="start-screen">
-        <h1 style="color:white; margin:0; font-size: 1.8rem;">SYSTEM <span style="color:var(--primary)">REIKURON</span></h1>
-        <p style="color:#777; font-size: 0.9rem;">Finger Gesture Control</p>
-        <button id="start-btn">INITIALIZE</button>
-        <div id="loading-text">Loading Neural Network...</div>
-        <div id="error-msg"></div>
+        <h1 style="color:white; margin:0; font-size: 2.5rem;">PIXEL <span style="color:var(--primary)">AR</span></h1>
+        <p style="color:#aaa;">Voxel Particle System</p>
+        <button id="start-btn">START SYSTEM</button>
+        <div id="loading-text" style="margin-top:20px; color:#555; display:none;">Initializing Voxels...</div>
     </div>
 
     <div id="ui-layer">
+        <div id="fps-counter">FPS: 60</div>
         <div id="top-bar"><div id="brand">REIKURON</div></div>
-        <div id="shape-display">Sphere</div>
+        <div id="shape-display">SPHERE</div>
 
-        <!-- NEW MINI GUIDE -->
         <div id="guide-panel">
-            <div class="guide-item"><span class="emoji-icon">☝️</span><span class="guide-text">1 Finger: Zoom In</span></div>
-            <div class="guide-item"><span class="emoji-icon">✌️</span><span class="guide-text">2 Fingers: Zoom Out</span></div>
-            <div class="guide-item"><span class="emoji-icon">🤟</span><span class="guide-text">3 Fingers: Rotate L</span></div>
-            <div class="guide-item"><span class="emoji-icon">🖖</span><span class="guide-text">4 Fingers: Rotate R</span></div>
-            <div class="guide-item"><span class="emoji-icon">🖐️</span><span class="guide-text">5 Fingers: Control</span></div>
-            <div class="guide-item"><span class="emoji-icon">👌</span><span class="guide-text">Pinch: Change Shape</span></div>
+            <div class="guide-item"><span class="emoji">☝️</span> Zoom In</div>
+            <div class="guide-item"><span class="emoji">✌️</span> Zoom Out</div>
+            <div class="guide-item"><span class="emoji">🤟</span> Rotate L</div>
+            <div class="guide-item"><span class="emoji">🖖</span> Rotate R</div>
+            <div class="guide-item"><span class="emoji">🖐️</span> Control</div>
+            <div class="guide-item"><span class="emoji">👌</span> Next Shape</div>
         </div>
 
-        <div id="feedback-icon"></div>
+        <div id="feedback"></div>
     </div>
 
     <video id="video-input" playsinline webkit-playsinline muted autoplay></video>
 
-    <!-- LIBS -->
     <script type="importmap">{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }</script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"></script>
@@ -144,228 +114,250 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // --- CONFIG ---
-        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        const CONFIG = {
-            particleCount: isMobile ? 6500 : 22000,
-            particleSize: isMobile ? 0.2 : 0.08,
+        // --- 1. ADAPTIVE PERFORMANCE ---
+        function getHardwareConfig() {
+            const cores = navigator.hardwareConcurrency || 4;
+            const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+            
+            // PC/High-End: More particles, smaller size
+            if (!isMobile && cores >= 8) return { count: 35000, size: 0.15, ratio: 1.5 };
+            // Mid-Range
+            if (cores >= 6) return { count: 20000, size: 0.2, ratio: 1.2 };
+            // Mobile/Low-End: Fewer particles, bigger size (to fill gaps)
+            return { count: 12000, size: 0.3, ratio: 1.0 };
+        }
+
+        const HW = getHardwareConfig();
+
+        const SETTINGS = {
             camZ: 35,
             zoomSpeed: 0.5,
-            rotSpeed: 0.04
+            rotSpeed: 0.05
         };
+
+        const SHAPES = ['Sphere', 'Reikuron Crow', 'Itachi Sharingan', 'Helix', 'Galaxy'];
 
         // --- GLOBALS ---
         let scene, camera, renderer, particles;
         let positions, colors, targetPositions;
         let handPos = new THREE.Vector3(0,0,0);
-        let isHandDetected = false;
-        let isPinching = false, wasPinching = false;
+        let isHandDetected = false, isPinching = false, wasPinching = false;
+        let fingerCount = 0;
         let currentShape = 0;
         let time = 0;
-        let fingerCount = 0; // Tracks 0-5 fingers
 
-        const SHAPES = ['Sphere', 'Reikuron Crow', 'Itachi Eye', 'Helix', 'Cube'];
-
-        // --- THREE.JS ---
+        // --- 2. THREE.JS SETUP ---
         function initThree() {
             scene = new THREE.Scene();
-            scene.fog = new THREE.FogExp2(0x050505, 0.02);
+            scene.fog = new THREE.FogExp2(0x050505, 0.02); // Dark fog
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = CONFIG.camZ;
+            camera.position.z = SETTINGS.camZ;
 
-            renderer = new THREE.WebGLRenderer({ antialias: !isMobile, alpha: true });
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            // PIXEL ART STYLE SETTINGS
+            renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: "high-performance" });
             renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, HW.ratio));
             document.body.appendChild(renderer.domElement);
 
             createParticles();
+
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
             });
+
             animate();
         }
 
         function createParticles() {
             const geo = new THREE.BufferGeometry();
-            const count = CONFIG.particleCount;
+            const count = HW.count;
             positions = new Float32Array(count * 3);
             colors = new Float32Array(count * 3);
             targetPositions = new Float32Array(count * 3);
 
             for(let i=0; i<count; i++) {
-                positions[i*3] = (Math.random()-0.5)*50;
-                positions[i*3+1] = (Math.random()-0.5)*50;
-                positions[i*3+2] = (Math.random()-0.5)*50;
-                colors[i*3] = 1; colors[i*3+1] = 1; colors[i*3+2] = 1;
+                positions[i*3] = (Math.random()-0.5)*100;
+                positions[i*3+1] = (Math.random()-0.5)*100;
+                positions[i*3+2] = (Math.random()-0.5)*100;
             }
+
             geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
+            // THE PIXEL MATERIAL (No Texture = Squares)
             const mat = new THREE.PointsMaterial({
-                size: CONFIG.particleSize,
+                size: HW.size,
                 vertexColors: true,
-                blending: THREE.AdditiveBlending,
-                depthWrite: false,
-                transparent: true,
-                opacity: 0.9
+                sizeAttenuation: true // Makes them smaller when far away (3D effect)
+                // No 'map', no 'blending', no 'transparent' -> Solid Squares
             });
 
             particles = new THREE.Points(geo, mat);
             scene.add(particles);
+            
+            // Memory for colors
+            particles.geometry.userData.targetColors = new Float32Array(count * 3);
+            
             generateShape(0);
         }
 
         function generateShape(index) {
             currentShape = index;
-            document.getElementById('shape-display').innerText = SHAPES[index];
-            const count = CONFIG.particleCount;
+            document.getElementById('shape-display').innerText = SHAPES[index].toUpperCase();
+            
+            const count = HW.count;
             const scale = 10;
+            const tColors = particles.geometry.userData.targetColors;
 
             for(let i=0; i<count; i++) {
-                let x,y,z;
+                let x,y,z, r,g,b;
                 const i3 = i*3;
 
-                if (index === 0) { // Sphere
+                // 1. SPHERE
+                if (index === 0) { 
                     const phi = Math.acos(-1 + (2*i)/count);
                     const theta = Math.sqrt(count * Math.PI) * phi;
                     x = scale * Math.cos(theta) * Math.sin(phi);
                     y = scale * Math.sin(theta) * Math.sin(phi);
                     z = scale * Math.cos(phi);
+                    // Digital Cyan
+                    r=0.0; g=1.0; b=0.8;
                 }
-                else if (index === 1) { // THE CROW
-                    if(i < count * 0.2) {
-                        const r = Math.random() * 2;
-                        const theta = Math.random() * Math.PI * 2;
-                        const phi = Math.random() * Math.PI;
-                        x = r * Math.cos(theta) * Math.sin(phi);
-                        y = r * Math.sin(theta) * Math.sin(phi);
-                        z = (r * Math.cos(phi) * 4) + 2;
-                    } else {
-                        const t = (i - count*0.2)/(count*0.8);
-                        const side = i%2==0 ? 1 : -1;
-                        x = side * (2 + t * 20);
-                        y = Math.sin(t * Math.PI) * 8 + (Math.random()-0.5);
-                        z = -Math.abs(x)*0.5 + (Math.random()-0.5)*2;
-                    }
-                }
-                else if (index === 2) { // ITACHI
-                    if(i < count * 0.1) {
-                        const r = Math.random() * 2;
+                // 2. CROW
+                else if (index === 1) { 
+                    if(i < count * 0.25) {
+                        const rad = Math.random() * 3;
                         const ang = Math.random() * 6.28;
-                        x = Math.cos(ang)*r; y = Math.sin(ang)*r; z=0;
-                    } else if (i < count * 0.9) {
-                        const blade = i % 3;
-                        const offset = (blade * 2.09);
-                        const r = (Math.random() * 10) + 2;
-                        const ang = (Math.random() * 1.5) + offset;
-                        const spiral = ang + (r * 0.1); 
-                        x = Math.cos(spiral)*r; y = Math.sin(spiral)*r; z=(Math.random()-0.5);
+                        const phi = Math.random() * 3.14;
+                        x = rad * Math.cos(ang) * Math.sin(phi);
+                        y = rad * Math.sin(ang) * Math.sin(phi);
+                        z = rad * Math.cos(phi) * 4;
+                        r=0.2; g=0.2; b=0.2; // Grey pixels
                     } else {
-                        const ang = (i/ (count*0.1)) * 6.28;
-                        x = Math.cos(ang)*13; y = Math.sin(ang)*13; z=0;
+                        const t = (i - count*0.25)/(count*0.75);
+                        const side = i%2==0 ? 1 : -1;
+                        x = side * (2 + t * 25);
+                        y = Math.sin(t * 3.14) * 8 - Math.abs(x)*0.2;
+                        z = -Math.abs(x)*0.5 + (Math.random()-0.5)*3;
+                        r=0.0; g=0.3; b=0.9; // Blue pixels
                     }
                 }
-                else if (index === 3) { // Helix
+                // 3. ITACHI
+                else if (index === 2) {
+                    if(i < count * 0.1) {
+                         const ang = Math.random()*6.28; const rad = Math.random()*2;
+                         x=Math.cos(ang)*rad; y=Math.sin(ang)*rad; z=0;
+                         r=0; g=0; b=0; // Pure Black
+                    } else if(i < count * 0.9) {
+                         const blade = i%3;
+                         const rad = (Math.random()*12)+2;
+                         const ang = (Math.random()*1.2) + (blade*2.09);
+                         const s = ang + (rad*0.15);
+                         x=Math.cos(s)*rad; y=Math.sin(s)*rad; z=(Math.random()-0.5);
+                         r=1.0; g=0.0; b=0.0; // Pure Red
+                    } else {
+                         const ang=Math.random()*6.28;
+                         x=Math.cos(ang)*14; y=Math.sin(ang)*14; z=0;
+                         r=0.5; g=0; b=0;
+                    }
+                }
+                // 4. HELIX
+                else if (index === 3) {
                     const t = i * 0.05;
                     x = Math.cos(t) * 6; z = Math.sin(t) * 6;
                     y = (i/count - 0.5) * 40;
-                    if(i%2==0) { x = -x; z = -z; }
+                    if(i%2==0) { x=-x; z=-z; }
+                    r=0.0; g=1.0; b=0.2; // Matrix Green
                 }
-                else { // Cube
-                    const s = scale * 1.5;
-                    x = (Math.random()-0.5)*2*s;
-                    y = (Math.random()-0.5)*2*s;
-                    z = (Math.random()-0.5)*2*s;
+                // 5. GALAXY
+                else {
+                    const ang = i * 0.02;
+                    const rad = (i/count)*25;
+                    x = Math.cos(ang)*rad; z = Math.sin(ang)*rad;
+                    y = (Math.random()-0.5) * (25-rad)*0.2;
+                    r=0.8; g=0.0; b=1.0; // Neon Purple
                 }
+
                 targetPositions[i3] = x; targetPositions[i3+1] = y; targetPositions[i3+2] = z;
+                tColors[i3] = r; tColors[i3+1] = g; tColors[i3+2] = b;
             }
         }
 
-        // --- ANIMATION LOOP ---
-        function animate() {
+        // --- 5. ANIMATION LOOP ---
+        let lastTime = 0;
+        let frames = 0;
+
+        function animate(now) {
             requestAnimationFrame(animate);
+
+            if(now - lastTime >= 1000) {
+                document.getElementById('fps-counter').innerText = `FPS: ${frames}`;
+                frames = 0; lastTime = now;
+            }
+            frames++;
             time += 0.01;
 
             const pos = particles.geometry.attributes.position.array;
             const col = particles.geometry.attributes.color.array;
+            const tarCol = particles.geometry.userData.targetColors;
 
-            // --- GESTURE LOGIC BASED ON FINGER COUNT ---
-            processFingerGestures();
+            processFingers();
 
-            // Toggle Shape (Pinch) - Priority
             if (isPinching && !wasPinching) {
                 generateShape((currentShape + 1) % SHAPES.length);
-                showFeedback("💥 EXPLODE");
+                showFeedback("NEXT SHAPE");
             }
             wasPinching = isPinching;
 
-            // Itachi Logic
-            const isItachi = (currentShape === 2);
-            let targetHue = 0.6; 
-            if (isItachi) targetHue = 0.0;
-            // Only change color/attract if 5 fingers are up (Standard Mode)
-            else if (isHandDetected && fingerCount === 5 && !isPinching) {
-                targetHue = (handPos.x + 10) / 20;
-            }
-
             // PHYSICS LOOP
-            for(let i=0; i<CONFIG.particleCount; i++) {
+            for(let i=0; i<HW.count; i++) {
                 const i3 = i*3;
                 let tx = targetPositions[i3];
                 let ty = targetPositions[i3+1];
                 let tz = targetPositions[i3+2];
 
                 // Shape Animations
-                if(currentShape === 1 && i > CONFIG.particleCount*0.2) ty += Math.sin(time*5 + tx*0.2) * 2;
-                if(currentShape === 2) {
-                    const rot = -0.02;
-                    const x = tx; const y = ty;
-                    tx = x*Math.cos(rot) - y*Math.sin(rot);
-                    ty = x*Math.sin(rot) + y*Math.cos(rot);
-                    targetPositions[i3] = tx; targetPositions[i3+1] = ty;
+                if(SHAPES[currentShape] === 'Reikuron Crow') {
+                     if(Math.abs(tx)>5) ty += Math.sin(time*8)*1.5; 
+                }
+                if(SHAPES[currentShape] === 'Itachi Sharingan') {
+                     const rot = -0.03;
+                     const x=tx; const y=ty;
+                     tx=x*Math.cos(rot)-y*Math.sin(rot);
+                     ty=x*Math.sin(rot)+y*Math.cos(rot);
+                     targetPositions[i3]=tx; targetPositions[i3+1]=ty;
                 }
 
-                let vx = (tx - pos[i3]) * 0.05;
-                let vy = (ty - pos[i3+1]) * 0.05;
-                let vz = (tz - pos[i3+2]) * 0.05;
+                let vx = (tx - pos[i3]) * 0.08;
+                let vy = (ty - pos[i3+1]) * 0.08;
+                let vz = (tz - pos[i3+2]) * 0.08;
 
-                // ATTRACTION: Only happens if 5 fingers are up (or Pinch explosion)
+                // Hand Logic
                 if(isHandDetected) {
                     const dx = pos[i3] - handPos.x;
                     const dy = pos[i3+1] - handPos.y;
                     const dz = pos[i3+2] - handPos.z;
-                    const distSq = dx*dx + dy*dy + dz*dz;
+                    const dSq = dx*dx + dy*dy + dz*dz;
 
                     if(isPinching) {
-                        if(distSq < 150) {
-                            const f = 5.0 / (Math.sqrt(distSq)+0.1);
-                            vx += dx*f; vy += dy*f; vz += dz*f;
-                        }
-                    } else if (fingerCount === 5) {
-                        // "Like before" - Attract particles
-                        if(distSq < 400) {
-                            const f = (20 - Math.sqrt(distSq)) * 0.003;
-                            vx -= dx*f; vy -= dy*f; vz -= dz*f;
-                        }
+                        if(dSq < 200) { const f=5.0/(Math.sqrt(dSq)+0.01); vx+=dx*f; vy+=dy*f; vz+=dz*f; }
+                    } else if(fingerCount === 5) {
+                        if(dSq < 500) { const f=(22-Math.sqrt(dSq))*0.002; vx-=dx*f; vy-=dy*f; vz-=dz*f; }
                     }
                 }
 
                 pos[i3] += vx; pos[i3+1] += vy; pos[i3+2] += vz;
-
-                // Color
-                const c = new THREE.Color().setRGB(col[i3], col[i3+1], col[i3+2]);
-                let tColor;
-                if(isItachi) tColor = (i%5===0) ? new THREE.Color(0xff0000) : new THREE.Color(0x100000);
-                else tColor = new THREE.Color().setHSL(targetHue, 1.0, 0.6);
-                c.lerp(tColor, 0.05);
-                col[i3] = c.r; col[i3+1] = c.g; col[i3+2] = c.b;
+                
+                // Color Lerp (Instant pop for pixels looks better, but smooth is nice too)
+                col[i3] += (tarCol[i3]-col[i3])*0.1; 
+                col[i3+1] += (tarCol[i3+1]-col[i3+1])*0.1;
+                col[i3+2] += (tarCol[i3+2]-col[i3+2])*0.1;
             }
 
-            // Auto Rotate if no specific rotation gesture
-            if(fingerCount !== 3 && fingerCount !== 4 && currentShape !== 2) {
+            if(fingerCount !== 3 && fingerCount !== 4 && SHAPES[currentShape] !== 'Itachi Sharingan') {
                 particles.rotation.y += 0.002;
             }
 
@@ -374,143 +366,90 @@
             renderer.render(scene, camera);
         }
 
-        // --- NEW FINGER COUNTING LOGIC ---
-        function processFingerGestures() {
-            if(!isHandDetected || isPinching) {
-                document.getElementById('feedback-icon').style.opacity = '0';
-                return;
-            }
-
-            // 1 Finger: Zoom In
+        function processFingers() {
+            if(!isHandDetected || isPinching) return;
             if (fingerCount === 1) {
-                camera.position.z = Math.max(10, camera.position.z - CONFIG.zoomSpeed);
-                showFeedback("🔍 ZOOM IN");
+                camera.position.z = Math.max(10, camera.position.z - SETTINGS.zoomSpeed);
+                showFeedback("ZOOM IN");
             }
-            // 2 Fingers: Zoom Out
             else if (fingerCount === 2) {
-                camera.position.z = Math.min(60, camera.position.z + CONFIG.zoomSpeed);
-                showFeedback("🔍 ZOOM OUT");
+                camera.position.z = Math.min(100, camera.position.z + SETTINGS.zoomSpeed);
+                showFeedback("ZOOM OUT");
             }
-            // 3 Fingers: Rotate Left
             else if (fingerCount === 3) {
-                particles.rotation.y -= CONFIG.rotSpeed;
-                showFeedback("↺ ROTATE L");
+                particles.rotation.y -= SETTINGS.rotSpeed;
+                showFeedback("ROTATE L");
             }
-            // 4 Fingers: Rotate Right
             else if (fingerCount === 4) {
-                particles.rotation.y += CONFIG.rotSpeed;
-                showFeedback("↻ ROTATE R");
+                particles.rotation.y += SETTINGS.rotSpeed;
+                showFeedback("ROTATE R");
             }
-            // 5 Fingers: Control (Default)
             else if (fingerCount === 5) {
-                showFeedback("✋ CONTROL");
-                setTimeout(() => document.getElementById('feedback-icon').style.opacity = '0', 500);
+                showFeedback("CONTROL");
             }
         }
 
+        let feedbackTimer;
         function showFeedback(text) {
-            const el = document.getElementById('feedback-icon');
-            el.innerText = text;
-            el.style.opacity = '1';
+            const el = document.getElementById('feedback');
+            if(el.innerText !== text || el.style.opacity === '0') {
+                el.innerText = text;
+                el.style.opacity = '1';
+                clearTimeout(feedbackTimer);
+                feedbackTimer = setTimeout(() => el.style.opacity = '0', 600);
+            }
         }
 
-        // --- MEDIAPIPE LOGIC ---
+        // --- 6. START ---
         const startBtn = document.getElementById('start-btn');
         const video = document.getElementById('video-input');
-        
+
         startBtn.addEventListener('click', async () => {
+            if(location.protocol!=='https:' && location.hostname!=='localhost') {
+                alert("HTTPS Required"); return;
+            }
             startBtn.style.display = 'none';
             document.getElementById('loading-text').style.display = 'block';
 
-            if(window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
-                document.getElementById('error-msg').innerHTML = "HTTPS REQUIRED.";
-                document.getElementById('error-msg').style.display = 'block';
-                return;
-            }
-
             const hands = new Hands({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`});
-            hands.setOptions({ maxNumHands: 1, modelComplexity: isMobile?0:1, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+            hands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
             hands.onResults(onResults);
 
             try {
                 initThree();
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: {ideal:640}, height: {ideal:480} } });
                 video.srcObject = stream;
                 video.onloadedmetadata = () => {
                     video.play();
-                    video.style.display = 'block'; 
                     const cameraUtils = new Camera(video, { onFrame: async () => await hands.send({image: video}), width: 640, height: 480 });
                     cameraUtils.start();
                 };
-            } catch (err) {
-                console.error(err);
-                document.getElementById('error-msg').innerHTML = "Camera Denied.";
-                document.getElementById('error-msg').style.display = 'block';
-            }
+            } catch(e) { console.error(e); alert("Camera Denied"); }
         });
 
         function onResults(results) {
             const ss = document.getElementById('start-screen');
-            if(ss.style.opacity !== '0') {
-                ss.style.opacity = '0';
-                setTimeout(()=> ss.style.display='none', 500);
-            }
+            if(ss.style.opacity !== '0') { ss.style.opacity = '0'; setTimeout(()=>ss.style.display='none',500); }
 
             if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
                 isHandDetected = true;
                 const lm = results.multiHandLandmarks[0];
-                const index = lm[8];
-                const thumb = lm[4];
+                const rangeX = /Android|iPhone/i.test(navigator.userAgent) ? 25 : 45;
+                const rangeY = /Android|iPhone/i.test(navigator.userAgent) ? 35 : 30;
+                handPos.lerp(new THREE.Vector3((0.5-lm[8].x)*rangeX, (0.5-lm[8].y)*rangeY, 0), 0.2);
 
-                // Map Coordinates
-                const rangeX = isMobile ? 25 : 40;
-                const rangeY = isMobile ? 35 : 25;
-                const targetX = (0.5 - index.x) * rangeX;
-                const targetY = (0.5 - index.y) * rangeY;
-                handPos.lerp(new THREE.Vector3(targetX, targetY, 0), 0.2);
-                
-                // Check Pinch
-                const d = Math.sqrt(Math.pow(index.x - thumb.x, 2) + Math.pow(index.y - thumb.y, 2));
-                isPinching = (d < 0.05);
+                const pinch = Math.hypot(lm[8].x - lm[4].x, lm[8].y - lm[4].y);
+                isPinching = (pinch < 0.05);
 
-                // Count Fingers (Simple logic: Check if tip is above PIP joint)
-                // 8: Index Tip, 6: Index PIP
-                // 12: Mid Tip, 10: Mid PIP
-                // 16: Ring Tip, 14: Ring PIP
-                // 20: Pinky Tip, 18: Pinky PIP
-                // Thumb is tricky, we'll exclude it from "standing" count logic usually, 
-                // but let's just count the 4 fingers and assume Thumb is open if 4 are open.
                 let count = 0;
-                if (lm[8].y < lm[6].y) count++;  // Index
-                if (lm[12].y < lm[10].y) count++; // Middle
-                if (lm[16].y < lm[14].y) count++; // Ring
-                if (lm[20].y < lm[18].y) count++; // Pinky
-                
-                // If 4 fingers are up, we call it 5 (Open Hand) for simplicity + Thumb usually follows
-                if (count === 4) {
-                    // Check thumb just in case it's tucked? 
-                    // Let's just assume count 4 fingers = 4 state. 
-                    // But wait, "Stand 5" means open hand.
-                    // Let's refine:
-                    // 1 finger = Index up
-                    // 2 fingers = Index + Mid up
-                    // 3 fingers = Index + Mid + Ring
-                    // 4 fingers = Index + Mid + Ring + Pinky
-                    // 5 fingers = All 5.
-                    
-                    // Let's verify Thumb. Thumb tip x vs Thumb IP x depends on hand side.
-                    // Easier: check distance thumb tip to pinky knuckle (17). If far, it's open.
-                    const thumbOpen = (Math.sqrt(Math.pow(lm[4].x - lm[17].x, 2)) > 0.15);
-                    if (thumbOpen) count = 5;
-                    else count = 4;
-                }
-                
+                if (lm[8].y < lm[6].y) count++; 
+                if (lm[12].y < lm[10].y) count++;
+                if (lm[16].y < lm[14].y) count++;
+                if (lm[20].y < lm[18].y) count++;
+                if (count === 4 && Math.abs(lm[4].x - lm[17].x) > 0.15) count = 5;
                 fingerCount = count;
-
             } else {
-                isHandDetected = false;
-                isPinching = false;
-                fingerCount = 0;
+                isHandDetected = false; fingerCount = 0;
             }
         }
     </script>
